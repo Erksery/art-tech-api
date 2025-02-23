@@ -12,6 +12,9 @@ import { Request } from 'express';
 import { File } from '../interfaces/File.interface';
 import { FilesService } from '../services/files.service';
 import { AuthGuard } from 'src/auth/guard/auth.guard';
+import { RolesGuard } from 'src/auth/guard/roles.guard';
+import { Roles } from 'src/auth/decorators/roles.decorator';
+import { RolesConfig } from 'src/config/roles.config';
 
 @Controller('files')
 export class FilesController {
@@ -23,7 +26,8 @@ export class FilesController {
   }
 
   @Get(':id')
-  @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles(RolesConfig.all)
   findOne(@Req() request: Request) {
     return this.filesService.findOne(request.params.id);
   }

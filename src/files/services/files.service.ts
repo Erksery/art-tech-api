@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { File } from '../interfaces/File.interface';
-import { createFile } from './dto/create-file.dto';
+import { createFile } from './utils/create-file';
 
 export function findAllFiles(files: File[]): File[] {
   return files;

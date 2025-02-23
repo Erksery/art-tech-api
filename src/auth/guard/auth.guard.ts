@@ -26,9 +26,11 @@ export class AuthGuard implements CanActivate {
 
     try {
       const user = this.jwtService.verify(token);
+
       request.user = user;
       return true;
     } catch (error) {
+      console.log(error);
       throw new ForbiddenException('Токен авторизации недействителен');
     }
   }
