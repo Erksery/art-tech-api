@@ -7,12 +7,13 @@ import { RegisterDto } from '../dto/register.dto';
 import { LoginDto } from '../dto/login.dto';
 import { createUser } from './utils/createUser';
 import { loginUser } from './utils/loginUser';
+import { logoutUser } from './utils/logoutUser';
 
 @Injectable()
 export class UserService {
   constructor(
     @InjectModel(User) private userModel: typeof User,
-    @InjectModel(Token) private readonly tokenModel: typeof Token,
+    @InjectModel(Token) private tokenModel: typeof Token,
     private jwtService: JwtService,
   ) {}
 
@@ -21,6 +22,10 @@ export class UserService {
   }
 
   async login(dto: LoginDto) {
-    return loginUser(dto, this.userModel, this.jwtService);
+    return loginUser(dto, this.userModel, this.tokenModel, this.jwtService);
+  }
+
+  async logout(refreshToken) {
+    return logoutUser(refreshToken, this.tokenModel);
   }
 }

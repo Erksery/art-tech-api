@@ -5,6 +5,7 @@ import {
   ForbiddenException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+import { Token } from 'src/models/tokens.model';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
@@ -14,46 +15,28 @@ export class AuthGuard implements CanActivate {
     const request = context.switchToHttp().getRequest();
     const authHeader = request.headers['authorization'];
 
-    if (!authHeader) {
-      throw new ForbiddenException('Токен авторизации отсутствует');
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      throw new ForbiddenException(
+        'Токен авторизации отсутствует или некорректен',
+      );
     }
 
-    const [accessToken, refreshToken] = this.extractTokens(authHeader);
-
-    if (!accessToken && !refreshToken) {
-      throw new ForbiddenException('Отсутствуют оба токена');
-    }
+    const token = authHeader.split(' ')[1];
 
     try {
-      if (accessToken) {
-        const user = await this.jwtService.verifyAsync(accessToken);
-        request.user = user;
-        return true;
+      const user = await this.jwtService.verifyAsync(token);
+      const tokenExists = await Token.findOne({ where: { token: token } });
+      if (!tokenExists) {
+        throw new ForbiddenException(
+          'Токен не найден в базе, авторизуйтесь заново',
+        );
       }
-
-      if (refreshToken) {
-        const user = await this.jwtService.verifyAsync(refreshToken);
-        request.user = user;
-        return true;
-      }
+      request.user = user;
+      request.token = token;
+      return true;
     } catch (error) {
-      console.log(error);
+      console.error('Ошибка валидации токена:', error);
       throw new ForbiddenException('Токен авторизации недействителен');
     }
-
-    return false;
-  }
-
-  private extractTokens(authHeader: string) {
-    const tokens = authHeader.split(' ');
-
-    // Проверяем формат: Bearer <accessToken> или Bearer <refreshToken>
-    if (tokens.length === 2) {
-      return [tokens[1], undefined];
-    } else if (tokens.length === 3) {
-      return [tokens[1], tokens[2]];
-    }
-
-    return [undefined, undefined];
   }
 }

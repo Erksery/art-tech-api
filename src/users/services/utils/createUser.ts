@@ -31,9 +31,7 @@ export const createUser = async (
 
     const { accessToken, refreshToken } = tokensGenerate(newUser, jwtService);
 
-    const hashedToken = await Token.hashToken(refreshToken);
-
-    await tokenModel.create({ userId: newUser.id, token: hashedToken });
+    await tokenModel.create({ userId: newUser.id, token: refreshToken });
 
     const userResponse = plainToInstance(RegisterResponseDto, newUser, {
       excludeExtraneousValues: true,

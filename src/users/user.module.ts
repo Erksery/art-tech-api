@@ -10,8 +10,7 @@ import { Token } from 'src/models/tokens.model';
   imports: [
     SequelizeModule.forFeature([User, Token]),
     JwtModule.register({
-      secret: process.env.SECRET_KEY,
-      signOptions: { expiresIn: '30d' },
+      secret: process.env.JWT_ACCESS_SECRET,
     }),
   ],
   controllers: [UserController],

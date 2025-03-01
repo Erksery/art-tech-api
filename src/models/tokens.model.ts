@@ -24,8 +24,4 @@ export class Token extends Model<
 
   @BelongsTo(() => User)
   declare user?: User;
-
-  static async hashToken(token: string): Promise<string> {
-    return await bcrypt.hash(token, 10);
-  }
 }

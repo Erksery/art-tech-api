@@ -8,10 +8,12 @@ import { LoginDto, LoginResponseDto } from 'src/users/dto/login.dto';
 import * as bcrypt from 'bcryptjs';
 import { tokensGenerate } from './scripts/tokensGenerate';
 import { plainToInstance } from 'class-transformer';
+import { Token } from 'src/models/tokens.model';
 
 export const loginUser = async (
   dto: LoginDto,
   userModel: typeof User,
+  tokenModel: typeof Token,
   jwtService,
 ) => {
   try {
@@ -25,6 +27,16 @@ export const loginUser = async (
       throw new UnauthorizedException('Неверный пароль');
     }
     const { accessToken, refreshToken } = tokensGenerate(user, jwtService);
+
+    const existingToken = await tokenModel.findOne({
+      where: { userId: user.id },
+    });
+
+    if (existingToken) {
+      await existingToken.update({ token: refreshToken });
+    } else {
+      await tokenModel.create({ userId: user.id, token: refreshToken });
+    }
 
     const userResponse = plainToInstance(LoginResponseDto, user, {
       excludeExtraneousValues: true,
