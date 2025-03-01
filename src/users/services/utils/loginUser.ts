@@ -4,8 +4,10 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { User } from 'src/models/user.model';
-import { LoginDto } from 'src/users/dto/login.dto';
+import { LoginDto, LoginResponseDto } from 'src/users/dto/login.dto';
 import * as bcrypt from 'bcryptjs';
+import { tokensGenerate } from './scripts/tokensGenerate';
+import { plainToInstance } from 'class-transformer';
 
 export const loginUser = async (
   dto: LoginDto,
@@ -22,13 +24,12 @@ export const loginUser = async (
     if (!isPasswordValid) {
       throw new UnauthorizedException('Неверный пароль');
     }
-    const token = jwtService.sign({
-      id: user.id,
-      login: user.login,
-      role: user.role,
-      status: user.status,
+    const { accessToken, refreshToken } = tokensGenerate(user, jwtService);
+
+    const userResponse = plainToInstance(LoginResponseDto, user, {
+      excludeExtraneousValues: true,
     });
-    return { token };
+    return { user: userResponse, accessToken, refreshToken };
   } catch (err) {
     if (err instanceof UnauthorizedException) {
       throw err;

@@ -1,4 +1,5 @@
 import { User } from 'src/models/user.model';
+import { Token } from 'src/models/tokens.model';
 import { JwtService } from '@nestjs/jwt';
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
@@ -11,14 +12,15 @@ import { loginUser } from './utils/loginUser';
 export class UserService {
   constructor(
     @InjectModel(User) private userModel: typeof User,
+    @InjectModel(Token) private readonly tokenModel: typeof Token,
     private jwtService: JwtService,
   ) {}
 
-  async register(dto: RegisterDto): Promise<User> {
-    return createUser(dto, this.userModel);
+  async register(dto: RegisterDto) {
+    return createUser(dto, this.userModel, this.tokenModel, this.jwtService);
   }
 
-  async login(dto: LoginDto): Promise<{ token: string }> {
+  async login(dto: LoginDto) {
     return loginUser(dto, this.userModel, this.jwtService);
   }
 }

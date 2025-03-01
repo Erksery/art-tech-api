@@ -12,5 +12,6 @@ import { AuthModule } from './auth/auth.module';
     UserModule,
     AuthModule,
   ],
+  exports: [SequelizeModule],
 })
 export class AppModule {}

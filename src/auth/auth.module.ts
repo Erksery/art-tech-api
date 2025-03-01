@@ -11,11 +11,10 @@ import { AuthGuard } from './guard/auth.guard';
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: async (configService: ConfigService) => {
-        const secretKey = configService.get<string>('SECRET_KEY');
+        const secretKey = configService.get<string>('JWT_ACCESS_SECRET');
 
         return {
           secret: secretKey,
-          signOptions: { expiresIn: '30d' },
         };
       },
     }),

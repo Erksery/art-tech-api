@@ -9,3 +9,28 @@ export class RegisterDto {
   @Length(6, 24)
   password: string;
 }
+
+import { Exclude, Expose } from 'class-transformer';
+
+export class RegisterResponseDto {
+  @Expose()
+  id: number;
+
+  @Expose()
+  login: string;
+
+  @Expose()
+  status: string;
+
+  @Expose()
+  role: string;
+
+  @Exclude()
+  password?: string;
+
+  @Exclude()
+  refreshToken?: string;
+
+  @Exclude()
+  avatar_url?: string;
+}
