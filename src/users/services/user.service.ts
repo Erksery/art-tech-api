@@ -8,6 +8,8 @@ import { LoginDto } from '../dto/login.dto';
 import { createUser } from './utils/createUser';
 import { loginUser } from './utils/loginUser';
 import { logoutUser } from './utils/logoutUser';
+import { refreshUserToken } from './utils/refreshUserToken';
+import { Response, response } from 'express';
 
 @Injectable()
 export class UserService {
@@ -17,15 +19,59 @@ export class UserService {
     private jwtService: JwtService,
   ) {}
 
-  async register(dto: RegisterDto) {
-    return createUser(dto, this.userModel, this.tokenModel, this.jwtService);
+  async register(dto: RegisterDto, res: Response) {
+    const { user, accessToken, refreshToken } = await createUser(
+      dto,
+      this.userModel,
+      this.tokenModel,
+      this.jwtService,
+    );
+
+    res.cookie('accessToken', accessToken, {
+      httpOnly: true,
+      secure: false,
+      sameSite: 'strict',
+      maxAge: 15 * 60 * 1000, // 15 минут
+    });
+    return res.json({ user, accessToken, refreshToken });
   }
 
-  async login(dto: LoginDto) {
-    return loginUser(dto, this.userModel, this.tokenModel, this.jwtService);
+  async login(dto: LoginDto, res: Response) {
+    const { user, accessToken, refreshToken } = await loginUser(
+      dto,
+      this.userModel,
+      this.tokenModel,
+      this.jwtService,
+    );
+    res.cookie('accessToken', accessToken, {
+      httpOnly: true,
+      secure: false,
+      sameSite: 'strict',
+      maxAge: 15 * 60 * 1000, // 15 минут
+    });
+    return res.json({ user, accessToken, refreshToken });
   }
 
-  async logout(refreshToken) {
-    return logoutUser(refreshToken, this.tokenModel);
+  async logout(refreshToken, res: Response) {
+    const response = logoutUser(refreshToken, this.tokenModel);
+    res.clearCookie('accessToken');
+    return res.json({ response });
+  }
+
+  async refresh(refreshToken, res: Response) {
+    const { accessToken, newRefreshToken } = await refreshUserToken(
+      refreshToken,
+      this.userModel,
+      this.tokenModel,
+      this.jwtService,
+    );
+
+    res.cookie('accessToken', accessToken, {
+      httpOnly: true,
+      secure: false,
+      sameSite: 'strict',
+      maxAge: 15 * 60 * 1000,
+    });
+    return res.json({ accessToken, newRefreshToken });
   }
 }

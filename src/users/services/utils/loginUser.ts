@@ -9,6 +9,7 @@ import * as bcrypt from 'bcryptjs';
 import { tokensGenerate } from './scripts/tokensGenerate';
 import { plainToInstance } from 'class-transformer';
 import { Token } from 'src/models/tokens.model';
+import { Response } from 'express';
 
 export const loginUser = async (
   dto: LoginDto,
@@ -41,6 +42,7 @@ export const loginUser = async (
     const userResponse = plainToInstance(LoginResponseDto, user, {
       excludeExtraneousValues: true,
     });
+
     return { user: userResponse, accessToken, refreshToken };
   } catch (err) {
     if (err instanceof UnauthorizedException) {

@@ -1,27 +1,33 @@
-import { Body, Controller, Post, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Post, Req, Res, UseGuards } from '@nestjs/common';
+import { Request, response, Response } from 'express';
 import { RegisterDto } from '../dto/register.dto';
-import { UserService } from '../services/user.service';
 import { LoginDto } from '../dto/login.dto';
 import { AuthGuard } from 'src/auth/guard/auth.guard';
+import { UserService } from '../services/user.service';
 
 @Controller('auth')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Post('register')
-  async register(@Body() dto: RegisterDto) {
-    return this.userService.register(dto);
+  async register(@Body() dto: RegisterDto, @Res() res: Response) {
+    return this.userService.register(dto, res);
   }
 
   @Post('login')
-  async login(@Body() dto: LoginDto) {
-    return this.userService.login(dto);
+  async login(@Body() dto: LoginDto, @Res() res: Response) {
+    return this.userService.login(dto, res);
   }
   @UseGuards(AuthGuard)
   @Post('logout')
-  async logout(@Req() req) {
+  async logout(@Req() req: Request, @Res() res: Response) {
     const refreshToken = req.headers['authorization']?.split(' ')[1];
-    console.log(refreshToken);
-    return this.userService.logout(refreshToken);
+    return this.userService.logout(refreshToken, res);
+  }
+  @UseGuards(AuthGuard)
+  @Post('refresh')
+  async refresh(@Req() req: Request, @Res() res: Response) {
+    const refreshToken = req.headers['authorization']?.split(' ')[1];
+    return this.userService.refresh(refreshToken, res);
   }
 }

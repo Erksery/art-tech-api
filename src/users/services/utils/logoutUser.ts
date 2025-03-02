@@ -1,4 +1,8 @@
-import { HttpException, HttpStatus } from '@nestjs/common';
+import {
+  HttpException,
+  HttpStatus,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { Token } from 'src/models/tokens.model';
 
 export const logoutUser = async (refreshToken, tokenModel: typeof Token) => {
@@ -7,16 +11,18 @@ export const logoutUser = async (refreshToken, tokenModel: typeof Token) => {
       where: { token: refreshToken },
     });
 
-    console.log(refreshToken);
-
     if (!deleted) {
       throw new HttpException(
         'Пользователь не авторизован',
         HttpStatus.UNAUTHORIZED,
       );
     }
+
     return { message: 'Выход выполнен успешно' };
   } catch (err) {
+    if (err instanceof UnauthorizedException) {
+      throw err;
+    }
     console.error('Ошибка при выходе пользователя', err);
     throw new HttpException(
       'Ошибка при выходе пользователя',

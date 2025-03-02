@@ -31,6 +31,6 @@ export class RegisterResponseDto {
   @Exclude()
   refreshToken?: string;
 
-  @Exclude()
+  @Expose()
   avatar_url?: string;
 }
