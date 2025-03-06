@@ -1,5 +1,6 @@
 import * as dotenv from 'dotenv';
 import { Dialect } from 'sequelize';
+import { Folders } from 'src/models/folders.model';
 import { Token } from 'src/models/tokens.model';
 import { User } from 'src/models/user.model';
 
@@ -12,7 +13,7 @@ export const sequelizeConfig = {
   username: 'root',
   password: process.env.SQL_PASSWORD,
   database: 'artTechManager',
-  models: [User, Token],
+  models: [User, Token, Folders],
   autoLoadModels: true,
   synchronize: true,
   sync: { alter: true },

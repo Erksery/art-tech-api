@@ -1,7 +1,10 @@
 import { ConflictException, HttpException, HttpStatus } from '@nestjs/common';
 import { User } from 'src/models/user.model';
 import { Token } from 'src/models/tokens.model';
-import { RegisterDto, RegisterResponseDto } from 'src/users/dto/register.dto';
+import {
+  RegisterDto,
+  RegisterResponseDto,
+} from 'src/modules/users/dto/register.dto';
 import { InferCreationAttributes } from 'sequelize';
 
 import { plainToInstance } from 'class-transformer';

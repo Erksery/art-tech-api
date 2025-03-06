@@ -4,7 +4,7 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { User } from 'src/models/user.model';
-import { LoginDto, LoginResponseDto } from 'src/users/dto/login.dto';
+import { LoginDto, LoginResponseDto } from 'src/modules/users/dto/login.dto';
 import * as bcrypt from 'bcryptjs';
 import { tokensGenerate } from './scripts/tokensGenerate';
 import { plainToInstance } from 'class-transformer';

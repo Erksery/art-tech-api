@@ -1,9 +1,10 @@
 import { Module } from '@nestjs/common';
-import { FilesModule } from './files/files.module';
+import { FilesModule } from './modules/files/files.module';
 import { SequelizeModule } from '@nestjs/sequelize';
 import { sequelizeConfig } from './config/sequlize.config';
-import { UserModule } from './users/user.module';
+import { UserModule } from './modules/users/user.module';
 import { AuthModule } from './auth/auth.module';
+import { FoldersModule } from './modules/folders/folders.module';
 
 @Module({
   imports: [
@@ -11,6 +12,7 @@ import { AuthModule } from './auth/auth.module';
     FilesModule,
     UserModule,
     AuthModule,
+    FoldersModule,
   ],
   exports: [SequelizeModule],
 })

@@ -31,7 +31,7 @@ export class UserService {
       httpOnly: true,
       secure: false,
       sameSite: 'strict',
-      maxAge: 15 * 60 * 1000, // 15 минут
+      maxAge: 15 * 60 * 1000,
     });
     return res.json({ user, accessToken, refreshToken });
   }
@@ -47,7 +47,7 @@ export class UserService {
       httpOnly: true,
       secure: false,
       sameSite: 'strict',
-      maxAge: 15 * 60 * 1000, // 15 минут
+      maxAge: 15 * 60 * 1000,
     });
     return res.json({ user, accessToken, refreshToken });
   }

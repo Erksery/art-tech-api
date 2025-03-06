@@ -6,18 +6,24 @@ import {
   ForeignKey,
   BelongsTo,
 } from 'sequelize-typescript';
-import * as bcrypt from 'bcryptjs';
 import { User } from './user.model';
 import { InferAttributes, InferCreationAttributes } from 'sequelize';
 
 @Table({ tableName: 'tokens', timestamps: false })
 export class Token extends Model<
   InferAttributes<Token>,
-  InferCreationAttributes<Token>
+  InferCreationAttributes<Token, { omit: 'id' }>
 > {
+  @Column({
+    type: DataType.UUID,
+    defaultValue: DataType.UUIDV4,
+    primaryKey: true,
+  })
+  declare id: string;
+
   @ForeignKey(() => User)
-  @Column({ type: DataType.INTEGER, allowNull: false })
-  declare userId: number;
+  @Column({ type: DataType.UUID, allowNull: false })
+  declare userId: string;
 
   @Column({ type: DataType.STRING, allowNull: false })
   declare token: string;

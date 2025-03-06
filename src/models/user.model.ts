@@ -11,8 +11,14 @@ import { InferAttributes, InferCreationAttributes } from 'sequelize';
 @Table({ tableName: 'users', timestamps: false })
 export class User extends Model<
   InferAttributes<User>,
-  InferCreationAttributes<User>
+  InferCreationAttributes<User, { omit: 'id' }>
 > {
+  @Column({
+    type: DataType.UUID,
+    defaultValue: DataType.UUIDV4,
+    primaryKey: true,
+  })
+  declare id: string;
   @Column({ type: DataType.STRING, unique: true, allowNull: false })
   declare login: string;
 

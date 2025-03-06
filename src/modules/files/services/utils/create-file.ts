@@ -1,5 +1,5 @@
 import { HttpException, HttpStatus } from '@nestjs/common';
-import { File } from 'src/files/interfaces/File.interface';
+import { File } from 'src/modules/files/interfaces/File.interface';
 
 export function createFile(files: File[], newFile: File) {
   try {
