@@ -12,10 +12,7 @@ export const logoutUser = async (refreshToken, tokenModel: typeof Token) => {
     });
 
     if (!deleted) {
-      throw new HttpException(
-        'Пользователь не авторизован',
-        HttpStatus.UNAUTHORIZED,
-      );
+      throw new UnauthorizedException('Пользователь не авторизован');
     }
 
     return { message: 'Выход выполнен успешно' };
