@@ -2,12 +2,10 @@ import {
   Body,
   Controller,
   Get,
-  Param,
   Post,
   Query,
   Req,
   Request,
-  Res,
   UseGuards,
   UsePipes,
   ValidationPipe,
@@ -20,8 +18,12 @@ import { RolesConfig } from 'src/config/roles.config';
 import { StatusGuard } from 'src/auth/guard/status.guard';
 import { Status } from 'src/auth/decorators/status.decorator';
 import { StatusConfig } from 'src/config/status.config';
-import { FolderAccessGuard } from 'src/auth/guard/folderAccess.guard';
+
 import { CreateFolderDto } from '../dto/createFolder.dto';
+import { CreateFolderGuard } from 'src/auth/guard/folder/createFolder.guard';
+import { EditFolderGuard } from 'src/auth/guard/folder/editFolder.guard';
+import { EditFolderDto } from '../dto/editFolder.dto';
+import { DeleteFolderGuard } from 'src/auth/guard/folder/deleteFolder.guard';
 
 @Controller('folder')
 @UseGuards(AuthGuard, RolesGuard, StatusGuard)
@@ -35,7 +37,7 @@ export class FolderController {
     return this.folderService.get(req);
   }
 
-  @UseGuards(FolderAccessGuard)
+  @UseGuards(CreateFolderGuard)
   @UsePipes(new ValidationPipe({ whitelist: true }))
   @Post('create')
   async createFolders(
@@ -46,15 +48,19 @@ export class FolderController {
     return this.folderService.create(id || null, data, req);
   }
 
-  @UseGuards(FolderAccessGuard)
-  @Post('edit/:id')
-  async editFolders(@Param('id') id: string) {
-    return this.folderService.edit(id);
+  @UseGuards(EditFolderGuard)
+  @Post('edit')
+  async editFolders(
+    @Query('id') id: string,
+    @Body() data: EditFolderDto,
+    @Req() req: Request,
+  ) {
+    return this.folderService.edit(id, data, req);
   }
 
-  @UseGuards(FolderAccessGuard)
-  @Post('delete/:id')
-  async deleteFolders(@Param('id') id: string) {
+  @UseGuards(DeleteFolderGuard)
+  @Post('delete')
+  async deleteFolders(@Query('id') id: string) {
     return this.folderService.delete(id);
   }
 }

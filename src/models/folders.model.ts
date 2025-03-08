@@ -1,6 +1,11 @@
 import { Column, DataType, Model, Table } from 'sequelize-typescript';
 import { InferAttributes, InferCreationAttributes } from 'sequelize';
-import { PRIVACY_VALUES } from 'src/config/constants.config';
+import {
+  PRIVACY_VALUES,
+  PrivacyType,
+  SHARING_VALUES,
+  SharingType,
+} from 'src/config/constants.config';
 
 @Table({ tableName: 'folders', timestamps: false })
 export class Folders extends Model<
@@ -22,9 +27,16 @@ export class Folders extends Model<
   @Column({ type: DataType.UUID, allowNull: true })
   declare inFolder: string;
   @Column({
-    type: DataType.STRING,
+    type: DataType.ENUM(...Object.values(PRIVACY_VALUES)),
     allowNull: false,
     defaultValue: PRIVACY_VALUES.PRIVATE,
   })
-  declare privacy: string;
+  declare privacy: PrivacyType;
+
+  @Column({
+    type: DataType.ENUM(...Object.values(SHARING_VALUES)),
+    allowNull: true,
+    defaultValue: SHARING_VALUES.READING,
+  })
+  declare sharingOptions?: SharingType;
 }

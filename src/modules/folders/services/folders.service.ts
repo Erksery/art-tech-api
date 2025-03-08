@@ -2,8 +2,9 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { Folders } from 'src/models/folders.model';
 import { getFolders } from './utils/getFolders';
-import { Request } from 'express';
 import { createFolder } from './utils/createFolder';
+import { editFolder } from './utils/editFolder';
+import { deleteFolder } from './utils/deleteFolder';
 
 @Injectable()
 export class FolderService {
@@ -15,6 +16,10 @@ export class FolderService {
   async create(id: string | null, data, req) {
     return createFolder(this.folderModel, id, data, req.user);
   }
-  async edit(id: string) {}
-  async delete(id: string) {}
+  async edit(id: string, data, req) {
+    return editFolder(this.folderModel, id, data);
+  }
+  async delete(id: string) {
+    return deleteFolder(this.folderModel, id);
+  }
 }

@@ -1,15 +1,22 @@
 import { HttpException, HttpStatus } from '@nestjs/common';
 import { PRIVACY_VALUES } from 'src/config/constants.config';
+import { Folders } from 'src/models/folders.model';
 
-export const createFolder = async (folderModel, id, data, user) => {
+export const createFolder = async (
+  folderModel: typeof Folders,
+  id,
+  data,
+  user,
+) => {
   try {
     const folder = await folderModel.create({
       name: data.name,
       creator: user.id,
       inFolder: id || null,
       privacy: id
-        ? (await folderModel.findByPk(id)).privacy
+        ? ((await folderModel.findByPk(id))?.privacy ?? PRIVACY_VALUES.PRIVATE)
         : PRIVACY_VALUES.PRIVATE,
+      description: data.description ? data.description : null,
     });
     return folder;
   } catch (err) {

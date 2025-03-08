@@ -9,7 +9,7 @@ import { PRIVACY_VALUES } from 'src/config/constants.config';
 import { Folders } from 'src/models/folders.model';
 
 @Injectable()
-export class FolderAccessGuard implements CanActivate {
+export class CreateFolderGuard implements CanActivate {
   constructor(private reflector: Reflector) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {

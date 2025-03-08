@@ -13,6 +13,12 @@ export const ROLE_VALUES = {
   ADMIN: 'User',
 } as const;
 
+export const SHARING_VALUES = {
+  READING: 'Reading',
+  EDITING: 'Editing',
+} as const;
+
 export type PrivacyType = (typeof PRIVACY_VALUES)[keyof typeof PRIVACY_VALUES];
 export type StatusType = (typeof STATUS_VALUES)[keyof typeof STATUS_VALUES];
 export type RoleType = (typeof ROLE_VALUES)[keyof typeof ROLE_VALUES];
+export type SharingType = (typeof SHARING_VALUES)[keyof typeof SHARING_VALUES];
