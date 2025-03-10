@@ -11,15 +11,15 @@ export class FolderService {
   constructor(@InjectModel(Folder) private folderModel: typeof Folder) {}
 
   async get(req) {
-    return getFolders(this.folderModel, req.user);
+    return await getFolders(this.folderModel, req.user);
   }
   async create(id: string | null, data, req) {
-    return createFolder(this.folderModel, id, data, req.user);
+    return await createFolder(this.folderModel, id, data, req.user);
   }
-  async edit(id: string, data, req) {
-    return editFolder(this.folderModel, id, data);
+  async edit(id: string, data) {
+    return await editFolder(this.folderModel, id, data);
   }
   async delete(id: string) {
-    return deleteFolder(this.folderModel, id);
+    return await deleteFolder(this.folderModel, id);
   }
 }

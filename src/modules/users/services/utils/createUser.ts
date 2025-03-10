@@ -6,7 +6,6 @@ import {
   RegisterResponseDto,
 } from 'src/modules/users/dto/register.dto';
 import { InferCreationAttributes } from 'sequelize';
-
 import { plainToInstance } from 'class-transformer';
 import { tokensGenerate } from './scripts/tokensGenerate';
 

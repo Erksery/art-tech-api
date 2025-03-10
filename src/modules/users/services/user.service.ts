@@ -55,7 +55,7 @@ export class UserService {
   async logout(refreshToken, res: Response) {
     const response = logoutUser(refreshToken, this.tokenModel);
     res.clearCookie('accessToken');
-    return res.json({ response });
+    return res.json( response );
   }
 
   async refresh(refreshToken, res: Response) {

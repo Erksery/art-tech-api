@@ -21,7 +21,7 @@ export class UserController {
   @UseGuards(AuthGuard)
   @Post('logout')
   async logout(@Req() req: Request, @Res() res: Response) {
-    const refreshToken = req.headers['authorization']?.split(' ')[1];
+    const refreshToken = req.headers['authorization']?.split(' ')[1]
     return this.userService.logout(refreshToken, res);
   }
   @UseGuards(AuthGuard)
@@ -31,3 +31,4 @@ export class UserController {
     return this.userService.refresh(refreshToken, res);
   }
 }
+

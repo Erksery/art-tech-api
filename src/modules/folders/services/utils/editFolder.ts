@@ -15,7 +15,7 @@ export const editFolder = async (folderModel: typeof Folder, id, data) => {
 
     return folder;
   } catch (err) {
-    console.log('Ошибка при редактировании', err);
+    console.log('Ошибка при редактировании папки', err);
     throw new HttpException(
       'Ошибка при редактировании папки',
       HttpStatus.INTERNAL_SERVER_ERROR,
