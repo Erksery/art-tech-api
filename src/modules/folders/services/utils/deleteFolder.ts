@@ -1,7 +1,7 @@
 import { HttpException, HttpStatus } from '@nestjs/common';
-import { Folders } from 'src/models/folders.model';
+import { Folder } from 'src/models/folder.model';
 
-export const deleteFolder = async (folderModel: typeof Folders, id) => {
+export const deleteFolder = async (folderModel: typeof Folder, id) => {
   try {
     const folder = await folderModel.findByPk(id);
 

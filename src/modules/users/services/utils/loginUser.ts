@@ -8,7 +8,7 @@ import { LoginDto, LoginResponseDto } from 'src/modules/users/dto/login.dto';
 import * as bcrypt from 'bcryptjs';
 import { tokensGenerate } from './scripts/tokensGenerate';
 import { plainToInstance } from 'class-transformer';
-import { Token } from 'src/models/tokens.model';
+import { Token } from 'src/models/token.model';
 import { Response } from 'express';
 
 export const loginUser = async (

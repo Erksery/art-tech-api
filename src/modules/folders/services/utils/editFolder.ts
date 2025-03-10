@@ -1,6 +1,7 @@
 import { HttpException, HttpStatus } from '@nestjs/common';
+import { Folder } from 'src/models/folder.model';
 
-export const editFolder = async (folderModel, id, data) => {
+export const editFolder = async (folderModel: typeof Folder, id, data) => {
   try {
     const folder = await folderModel.findByPk(id);
 

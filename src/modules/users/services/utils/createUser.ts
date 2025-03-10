@@ -1,6 +1,6 @@
 import { ConflictException, HttpException, HttpStatus } from '@nestjs/common';
 import { User } from 'src/models/user.model';
-import { Token } from 'src/models/tokens.model';
+import { Token } from 'src/models/token.model';
 import {
   RegisterDto,
   RegisterResponseDto,

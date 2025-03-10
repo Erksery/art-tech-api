@@ -1,9 +1,9 @@
 import { HttpException, HttpStatus } from '@nestjs/common';
 import { PRIVACY_VALUES } from 'src/config/constants.config';
-import { Folders } from 'src/models/folders.model';
+import { Folder } from 'src/models/folder.model';
 
 export const createFolder = async (
-  folderModel: typeof Folders,
+  folderModel: typeof Folder,
   id,
   data,
   user,

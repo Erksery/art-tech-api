@@ -1,32 +1,19 @@
 import { Injectable } from '@nestjs/common';
-import { File } from '../interfaces/File.interface';
-import { createFile } from './utils/create-file';
-
-export function findAllFiles(files: File[]): File[] {
-  return files;
-}
-
-export function findOneFile(id: string, files: File[]) {
-  const file = files.find((file) => file.id === id);
-  return { file };
-}
+import { InjectModel } from '@nestjs/sequelize';
+import { File } from 'src/models/file.model';
+import { Request } from 'express';
 
 @Injectable()
 export class FilesService {
-  private files: File[] = [
-    { id: '1', name: 'sds' },
-    { id: '2', name: 'sdadads' },
-  ];
+  constructor(@InjectModel(File) private fileModel: typeof File) {}
 
-  create(file: File) {
-    this.files = createFile(this.files, file);
-  }
+  async findAll(id: string, req: Request) {}
 
-  findOne(id: string) {
-    return findOneFile(id, this.files);
-  }
+  async findOne(id: string, req: Request) {}
 
-  findAll(): File[] {
-    return findAllFiles(this.files);
-  }
+  async create(id: string, file: File, req: Request) {}
+
+  async edit(id: string, data, req: Request) {}
+
+  async delete(id: string, req: Request) {}
 }

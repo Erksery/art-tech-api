@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
-import { Folders } from 'src/models/folders.model';
+import { Folder } from 'src/models/folder.model';
 import { getFolders } from './utils/getFolders';
 import { createFolder } from './utils/createFolder';
 import { editFolder } from './utils/editFolder';
@@ -8,7 +8,7 @@ import { deleteFolder } from './utils/deleteFolder';
 
 @Injectable()
 export class FolderService {
-  constructor(@InjectModel(Folders) private folderModel: typeof Folders) {}
+  constructor(@InjectModel(Folder) private folderModel: typeof Folder) {}
 
   async get(req) {
     return getFolders(this.folderModel, req.user);

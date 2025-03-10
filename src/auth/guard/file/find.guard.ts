@@ -5,25 +5,25 @@ import {
   Injectable,
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-import { PRIVACY_VALUES, SHARING_VALUES } from 'src/config/constants.config';
+import { PRIVACY_VALUES } from 'src/config/constants.config';
 import { Folder } from 'src/models/folder.model';
 
 @Injectable()
-export class CreateFolderGuard implements CanActivate {
+export class FindGuard implements CanActivate {
   constructor(private reflector: Reflector) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
     const user = request.user;
-    const folderId = request.query.id;
+    const folderId = request.params.folderId;
 
     if (!folderId) {
-      return true;
+      throw new ForbiddenException(`Отсутствует индификатор папки`);
     }
 
     const parentFolder = await Folder.findOne({
       where: { id: folderId },
-      attributes: ['privacy', 'creator', 'sharingOptions'],
+      attributes: ['privacy', 'creator'],
     });
 
     if (!parentFolder) {
@@ -40,13 +40,10 @@ export class CreateFolderGuard implements CanActivate {
       );
     }
 
-    if (
-      parentFolder.privacy === PRIVACY_VALUES.PUBLIC &&
-      parentFolder.sharingOptions === SHARING_VALUES.EDITING
-    ) {
+    if (parentFolder.privacy === PRIVACY_VALUES.PUBLIC) {
       return true;
     }
 
-    throw new ForbiddenException('Недостаточно прав для выполнения операции');
+    throw new ForbiddenException('У вас нет доступа к этой папке');
   }
 }

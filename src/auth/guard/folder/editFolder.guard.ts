@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { PRIVACY_VALUES, SHARING_VALUES } from 'src/config/constants.config';
-import { Folders } from 'src/models/folders.model';
+import { Folder } from 'src/models/folder.model';
 
 @Injectable()
 export class EditFolderGuard implements CanActivate {
@@ -22,7 +22,7 @@ export class EditFolderGuard implements CanActivate {
       throw new ForbiddenException(`Отсутствует индификатор папки`);
     }
 
-    const folder = await Folders.findOne({
+    const folder = await Folder.findOne({
       where: { id: folderId },
       attributes: ['privacy', 'creator', 'sharingOptions'],
     });

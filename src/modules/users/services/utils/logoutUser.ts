@@ -3,7 +3,7 @@ import {
   HttpStatus,
   UnauthorizedException,
 } from '@nestjs/common';
-import { Token } from 'src/models/tokens.model';
+import { Token } from 'src/models/token.model';
 
 export const logoutUser = async (refreshToken, tokenModel: typeof Token) => {
   try {

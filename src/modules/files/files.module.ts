@@ -1,16 +1,13 @@
-import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
+import { Module } from '@nestjs/common';
+import { SequelizeModule } from '@nestjs/sequelize';
 import { FilesController } from './controllers/files.controller';
 import { FilesService } from './services/files.service';
-import { logger } from 'src/middleware/logger.middleware';
+import { File } from 'src/models/file.model';
 import { AuthModule } from 'src/auth/auth.module';
 
 @Module({
-  controllers: [FilesController],
+  imports: [SequelizeModule.forFeature([File]), AuthModule],
   providers: [FilesService],
-  imports: [AuthModule],
+  controllers: [FilesController],
 })
-export class FilesModule implements NestModule {
-  configure(consumer: MiddlewareConsumer) {
-    consumer.apply(logger).forRoutes(FilesController);
-  }
-}
+export class FilesModule {}

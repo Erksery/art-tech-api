@@ -8,9 +8,9 @@ import {
 } from 'src/config/constants.config';
 
 @Table({ tableName: 'folders', timestamps: false })
-export class Folders extends Model<
-  InferAttributes<Folders>,
-  InferCreationAttributes<Folders, { omit: 'id' }>
+export class Folder extends Model<
+  InferAttributes<Folder>,
+  InferCreationAttributes<Folder, { omit: 'id' }>
 > {
   @Column({
     type: DataType.UUID,

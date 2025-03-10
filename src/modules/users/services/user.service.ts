@@ -1,5 +1,5 @@
 import { User } from 'src/models/user.model';
-import { Token } from 'src/models/tokens.model';
+import { Token } from 'src/models/token.model';
 import { JwtService } from '@nestjs/jwt';
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';

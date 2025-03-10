@@ -1,4 +1,4 @@
-import { Token } from 'src/models/tokens.model';
+import { Token } from 'src/models/token.model';
 import {
   HttpException,
   HttpStatus,

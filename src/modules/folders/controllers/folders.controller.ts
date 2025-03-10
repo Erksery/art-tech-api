@@ -33,7 +33,7 @@ export class FolderController {
   constructor(private readonly folderService: FolderService) {}
 
   @Get('/get')
-  async getFolders(@Req() req) {
+  async getFolders(@Req() req: Request) {
     return this.folderService.get(req);
   }
 
