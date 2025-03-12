@@ -15,8 +15,10 @@ export class EditFolderGuard implements CanActivate {
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
     const user = request.user;
-    const folderId = request.query.id;
+    const folderId = request.params.folderId;
     const body = request.body;
+
+    console.log(folderId, body);
 
     if (!folderId) {
       throw new ForbiddenException(`Отсутствует индификатор папки`);

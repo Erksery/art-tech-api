@@ -1,7 +1,7 @@
 import { HttpException, HttpStatus } from '@nestjs/common';
 import { File } from 'src/models/file.model';
 
-export const createFile = async (
+export const handleFileUpload = async (
   fileModel: typeof File,
   file,
   folderId: string,
@@ -12,7 +12,7 @@ export const createFile = async (
       throw new HttpException(`Отсутствует id папки`, HttpStatus.NOT_FOUND);
     }
     const createdFile = await fileModel.create({
-      name: file.originalName,
+      name: file.filename,
       originalFilename: file.originalname,
       creator: user.id,
       mimeType: file.mimetype,

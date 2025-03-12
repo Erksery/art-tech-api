@@ -4,8 +4,6 @@ import {
   ForbiddenException,
   Injectable,
 } from '@nestjs/common';
-import { Reflector } from '@nestjs/core';
-import { PRIVACY_VALUES, SHARING_VALUES } from 'src/config/constants.config';
 import { Folder } from 'src/models/folder.model';
 
 @Injectable()
@@ -13,7 +11,7 @@ export class DeleteFolderGuard implements CanActivate {
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
     const user = request.user;
-    const folderId = request.query.id;
+    const folderId = request.params.folderId;
 
     if (!folderId) {
       throw new ForbiddenException(`Отсутствует идентификатор папки`);

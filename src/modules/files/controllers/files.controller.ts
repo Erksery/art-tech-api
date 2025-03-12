@@ -5,25 +5,31 @@ import {
   HttpCode,
   HttpStatus,
   Post,
-  Put,
   Delete,
   Param,
   Req,
   UseGuards,
+  Patch,
+  UseInterceptors,
+  UploadedFile,
 } from '@nestjs/common';
 import { Request } from 'express';
 import { FilesService } from '../services/files.service';
 import { AuthGuard } from 'src/auth/guard/auth.guard';
 import { RolesGuard } from 'src/auth/guard/roles.guard';
-import { Roles } from 'src/auth/decorators/roles.decorator';
-import { RolesConfig } from 'src/config/roles.config';
-import { StatusGuard } from 'src/auth/guard/status.guard';
-import { Status } from 'src/auth/decorators/status.decorator';
-import { StatusConfig } from 'src/config/status.config';
 import { FindGuard } from 'src/auth/guard/file/find.guard';
 import { CreateFileGuard } from 'src/auth/guard/file/createFile.guard';
 import { EditFileGuard } from 'src/auth/guard/file/editFile.guard';
 import { DeleteFileGuard } from 'src/auth/guard/file/deleteFile.guard';
+import { StatusGuard } from 'src/auth/guard/status.guard';
+import { Roles } from 'src/auth/decorators/roles.decorator';
+import { Status } from 'src/auth/decorators/status.decorator';
+import { RolesConfig } from 'src/config/roles.config';
+import { StatusConfig } from 'src/config/status.config';
+import { FileInterceptor } from '@nestjs/platform-express';
+
+import { diskStorage } from 'multer';
+import { extname } from 'path';
 
 @Controller('files')
 @UseGuards(AuthGuard, RolesGuard, StatusGuard)
@@ -44,18 +50,33 @@ export class FilesController {
     return this.filesService.findOne(fileId, req);
   }
 
-  @Post('folder/:folderId')
+  @Post('upload/:folderId')
   @HttpCode(HttpStatus.CREATED)
   @UseGuards(CreateFileGuard)
-  async create(
+  @UseInterceptors(
+    FileInterceptor('file', {
+      storage: diskStorage({
+        destination: `./${process.env.UPLOAD_FOLDER}`,
+        filename: (req, file, cb) => {
+          const uniqueSuffix =
+            Date.now() + '-' + Math.round(Math.random() * 1e9);
+          cb(
+            null,
+            `${file.fieldname}-${uniqueSuffix}${extname(file.originalname)}`,
+          );
+        },
+      }),
+    }),
+  )
+  async uploadFile(
     @Param('folderId') folderId: string,
-    @Body() file,
+    @UploadedFile() file: Express.Multer.File,
     @Req() req: Request,
   ) {
-    return this.filesService.create(folderId, file, req);
+    return this.filesService.fileUpload(folderId, file, req);
   }
 
-  @Put('folder/:folderId/file/:fileId')
+  @Patch('folder/:folderId/file/:fileId')
   @HttpCode(HttpStatus.OK)
   @UseGuards(EditFileGuard)
   async edit(

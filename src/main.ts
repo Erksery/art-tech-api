@@ -3,6 +3,12 @@ import { AppModule } from './app.module';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { ValidationPipe } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
+import { existsSync, mkdirSync } from 'fs';
+
+const uploadDir = `./${process.env.UPLOAD_FOLDER}`;
+if (!existsSync(uploadDir)) {
+  mkdirSync(uploadDir, { recursive: true });
+}
 
 async function bootstrap() {
   await ConfigModule.forRoot();

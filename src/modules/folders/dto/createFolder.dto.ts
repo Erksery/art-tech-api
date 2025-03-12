@@ -13,6 +13,7 @@ export class CreateFolderDto {
     message: 'Название папки должно содержать минимум 5 символов',
   })
   name: string;
+  folderId?: string;
 
   @IsOptional()
   @IsString({ message: 'Описание папки должно быть строкой' })

@@ -4,7 +4,7 @@ import { Folder } from 'src/models/folder.model';
 
 export const createFolder = async (
   folderModel: typeof Folder,
-  id,
+  folderId,
   data,
   user,
 ) => {
@@ -12,9 +12,10 @@ export const createFolder = async (
     const folder = await folderModel.create({
       name: data.name,
       creator: user.id,
-      inFolder: id || null,
-      privacy: id
-        ? ((await folderModel.findByPk(id))?.privacy ?? PRIVACY_VALUES.PRIVATE)
+      inFolder: folderId || null,
+      privacy: folderId
+        ? ((await folderModel.findByPk(folderId))?.privacy ??
+          PRIVACY_VALUES.PRIVATE)
         : PRIVACY_VALUES.PRIVATE,
       description: data.description ? data.description : null,
     });

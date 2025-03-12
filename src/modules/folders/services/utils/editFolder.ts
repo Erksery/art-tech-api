@@ -1,13 +1,17 @@
 import { HttpException, HttpStatus } from '@nestjs/common';
 import { Folder } from 'src/models/folder.model';
 
-export const editFolder = async (folderModel: typeof Folder, id, data) => {
+export const editFolder = async (
+  folderModel: typeof Folder,
+  folderId: string,
+  data,
+) => {
   try {
-    const folder = await folderModel.findByPk(id);
+    const folder = await folderModel.findByPk(folderId);
 
     if (!folder) {
       throw new HttpException(
-        `Папка с ID ${id} не найдена`,
+        `Папка с ID ${folderId} не найдена`,
         HttpStatus.NOT_FOUND,
       );
     }

@@ -4,7 +4,7 @@ import { File } from 'src/models/file.model';
 import { findAllFiles } from './utils/findAllFiles';
 import { Request } from 'express';
 import { findOneFile } from './utils/findOneFile';
-import { createFile } from './utils/createFile';
+import { handleFileUpload } from './utils/fileUpload';
 import { editFile } from './utils/editFile';
 import { deleteFile } from './utils/deleteFile';
 
@@ -20,8 +20,8 @@ export class FilesService {
     return await findOneFile(this.fileModel, fileId);
   }
 
-  async create(folderId: string, file: File, req: Request) {
-    return await createFile(this.fileModel, file, folderId, req.user);
+  async fileUpload(folderId: string, file, req: Request) {
+    return await handleFileUpload(this.fileModel, file, folderId, req.user);
   }
 
   async edit(fileId: string, data, req: Request) {

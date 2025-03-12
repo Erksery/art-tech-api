@@ -1,19 +1,22 @@
 import { HttpException, HttpStatus } from '@nestjs/common';
 import { Folder } from 'src/models/folder.model';
 
-export const deleteFolder = async (folderModel: typeof Folder, id) => {
+export const deleteFolder = async (
+  folderModel: typeof Folder,
+  folderId: string,
+) => {
   try {
-    const folder = await folderModel.findByPk(id);
+    const folder = await folderModel.findByPk(folderId);
 
     if (!folder) {
       throw new HttpException(
-        `Папка с ID ${id} не найдена`,
+        `Папка с ID ${folderId} не найдена`,
         HttpStatus.NOT_FOUND,
       );
     }
     await folder.destroy();
 
-    return { message: `Папка ${id} успешно удалена` };
+    return { message: `Папка ${folderId} успешно удалена` };
   } catch (err) {
     console.error('Ошибка удаления папки', err);
     throw new HttpException(

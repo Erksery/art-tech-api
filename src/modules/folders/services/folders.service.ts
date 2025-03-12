@@ -13,13 +13,13 @@ export class FolderService {
   async get(req) {
     return await getFolders(this.folderModel, req.user);
   }
-  async create(id: string | null, data, req) {
-    return await createFolder(this.folderModel, id, data, req.user);
+  async create(folderId: string | null, data, req) {
+    return await createFolder(this.folderModel, folderId, data, req.user);
   }
-  async edit(id: string, data) {
-    return await editFolder(this.folderModel, id, data);
+  async edit(folderId: string, data) {
+    return await editFolder(this.folderModel, folderId, data);
   }
-  async delete(id: string) {
-    return await deleteFolder(this.folderModel, id);
+  async delete(folderId: string) {
+    return await deleteFolder(this.folderModel, folderId);
   }
 }
