@@ -12,8 +12,10 @@ import {
   Patch,
   UseInterceptors,
   UploadedFile,
+  Res,
+  NotFoundException,
 } from '@nestjs/common';
-import { Request } from 'express';
+import { Request, Response } from 'express';
 import { FilesService } from '../services/files.service';
 import { AuthGuard } from 'src/auth/guard/auth.guard';
 import { RolesGuard } from 'src/auth/guard/roles.guard';
@@ -48,6 +50,37 @@ export class FilesController {
   @UseGuards(FindGuard)
   async findOne(@Param('fileId') fileId: string, @Req() req: Request) {
     return this.filesService.findOne(fileId, req);
+  }
+
+  @Get('image/:fileId')
+  @UseGuards(FindGuard)
+  async getImage(
+    @Param('fileId') fileId: string,
+    @Req() req: Request,
+    @Res() res: Response,
+  ) {
+    const file = await this.filesService.getFilePath(fileId, req);
+
+    if (!file) {
+      throw new NotFoundException('Файл не найден');
+    }
+    return res.sendFile(file);
+  }
+
+  @Get('download/:fileId')
+  @UseGuards(FindGuard)
+  async downloadFile(
+    @Param('fileId') fileId: string,
+    @Req() req: Request,
+    @Res() res: Response,
+  ) {
+    const filePath = await this.filesService.getFilePath(fileId, req);
+
+    if (!filePath) {
+      throw new NotFoundException('Файл не найден');
+    }
+
+    return res.download(filePath);
   }
 
   @Post('upload/:folderId')
