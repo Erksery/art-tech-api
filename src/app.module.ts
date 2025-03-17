@@ -1,12 +1,14 @@
 import { Module } from '@nestjs/common';
+import { SequelizeModule } from '@nestjs/sequelize';
+import { MulterModule } from '@nestjs/platform-express';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { FilesModule } from './modules/files/files.module';
-import { SequelizeModule } from '@nestjs/sequelize';
-import { sequelizeConfig } from './config/sequlize.config';
 import { UserModule } from './modules/users/user.module';
-import { AuthModule } from './auth/auth.module';
 import { FoldersModule } from './modules/folders/folders.module';
+import { sequelizeConfig } from './config/sequlize.config';
+import { AuthModule } from './auth/auth.module';
 import { join } from 'path';
+import * as multer from 'multer';
 
 @Module({
   imports: [
@@ -14,6 +16,9 @@ import { join } from 'path';
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '..', 'uploads'),
       serveRoot: '/uploads',
+    }),
+    MulterModule.register({
+      storage: multer.memoryStorage(),
     }),
     FilesModule,
     UserModule,

@@ -15,17 +15,17 @@ export class AuthGuard implements CanActivate {
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
 
-    const accessToken = request.cookies?.accessToken; // Достаём accessToken из cookie
+    const accessToken = request.cookies?.accessToken;
     console.log(request.cookies);
     const authHeader = request.headers['authorization'];
     const refreshToken = authHeader?.startsWith('Bearer ')
       ? authHeader.split(' ')[1]
       : null;
-    /*
+
     if (!accessToken) {
       throw new ForbiddenException('Токен авторизации отсутствует');
     }
-*/
+
     try {
       const user = await this.jwtService.verifyAsync(accessToken);
       request.user = user;

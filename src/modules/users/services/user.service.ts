@@ -9,7 +9,7 @@ import { createUser } from './utils/createUser';
 import { loginUser } from './utils/loginUser';
 import { logoutUser } from './utils/logoutUser';
 import { refreshUserToken } from './utils/refreshUserToken';
-import { Response, response } from 'express';
+import { Response } from 'express';
 
 @Injectable()
 export class UserService {
@@ -30,7 +30,7 @@ export class UserService {
     res.cookie('accessToken', accessToken, {
       httpOnly: true,
       secure: false,
-      sameSite: 'strict',
+      sameSite: 'lax',
       maxAge: 15 * 60 * 1000,
     });
     return res.json({ user, accessToken, refreshToken });
@@ -46,7 +46,7 @@ export class UserService {
     res.cookie('accessToken', accessToken, {
       httpOnly: true,
       secure: false,
-      sameSite: 'strict',
+      sameSite: 'lax',
       maxAge: 15 * 60 * 1000,
     });
     return res.json({ user, accessToken, refreshToken });
@@ -55,11 +55,11 @@ export class UserService {
   async logout(refreshToken, res: Response) {
     const response = logoutUser(refreshToken, this.tokenModel);
     res.clearCookie('accessToken');
-    return res.json( response );
+    return res.json(response);
   }
 
   async refresh(refreshToken, res: Response) {
-    const { accessToken, newRefreshToken } = await refreshUserToken(
+    const { accessToken } = await refreshUserToken(
       refreshToken,
       this.userModel,
       this.tokenModel,
@@ -69,9 +69,9 @@ export class UserService {
     res.cookie('accessToken', accessToken, {
       httpOnly: true,
       secure: false,
-      sameSite: 'strict',
+      sameSite: 'lax',
       maxAge: 15 * 60 * 1000,
     });
-    return res.json({ accessToken, newRefreshToken });
+    return res.json({ accessToken });
   }
 }

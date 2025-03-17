@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Delete,
+  Get,
   HttpCode,
   HttpStatus,
   Post,
@@ -9,7 +10,7 @@ import {
   Res,
   UseGuards,
 } from '@nestjs/common';
-import { Request, response, Response } from 'express';
+import { Request, Response } from 'express';
 import { RegisterDto } from '../dto/register.dto';
 import { LoginDto } from '../dto/login.dto';
 import { AuthGuard } from 'src/auth/guard/auth.guard';
@@ -36,9 +37,14 @@ export class UserController {
     return this.userService.logout(refreshToken, res);
   }
   @Post('refresh')
-  @UseGuards(AuthGuard)
+  //@UseGuards(AuthGuard)
   async refresh(@Req() req: Request, @Res() res: Response) {
     const refreshToken = req.headers['authorization']?.split(' ')[1];
     return this.userService.refresh(refreshToken, res);
+  }
+  @Get('profile')
+  @UseGuards(AuthGuard)
+  async get(@Req() req: Request) {
+    return req.user;
   }
 }

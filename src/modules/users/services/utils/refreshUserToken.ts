@@ -14,6 +14,9 @@ export const refreshUserToken = async (
   jwtService,
 ) => {
   try {
+    if (!refreshToken) {
+      throw new HttpException('Токен не передан', HttpStatus.BAD_REQUEST);
+    }
     const tokenInDb = await tokenModel.findOne({
       where: { token: refreshToken },
     });
@@ -24,6 +27,7 @@ export const refreshUserToken = async (
         HttpStatus.UNAUTHORIZED,
       );
     }
+
     const user = await userModel.findOne({
       where: { id: tokenInDb.userId },
     });
@@ -36,16 +40,16 @@ export const refreshUserToken = async (
     );
 
     await tokenModel.destroy({ where: { token: refreshToken } });
-    await tokenModel.create({ userId: user.id, token: newRefreshToken });
+    await tokenModel.create({ userId: user.id, token: refreshToken });
 
     return { accessToken, newRefreshToken };
   } catch (err) {
     if (err instanceof UnauthorizedException) {
       throw err;
     }
-    console.error('Ошибка при получении access токена', err);
+    console.error('Ошибка при получении refresh токена', err);
     throw new HttpException(
-      'Ошибка при получении access токена',
+      'Ошибка при получении refresh токена',
       HttpStatus.INTERNAL_SERVER_ERROR,
     );
   }
