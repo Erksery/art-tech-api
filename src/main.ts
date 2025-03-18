@@ -3,13 +3,8 @@ import { AppModule } from './app.module';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { ValidationPipe } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { existsSync, mkdirSync } from 'fs';
-import * as cookieParser from 'cookie-parser';
 
-const uploadDir = `./${process.env.UPLOAD_FOLDER || 'uploads'}`;
-if (uploadDir !== undefined && !existsSync(uploadDir)) {
-  mkdirSync(uploadDir, { recursive: true });
-}
+import * as cookieParser from 'cookie-parser';
 
 async function bootstrap() {
   await ConfigModule.forRoot();
@@ -27,7 +22,7 @@ async function bootstrap() {
   app.use(cookieParser());
 
   app.enableCors({
-    origin: ['http://192.168.0.3:5173'],
+    origin: ['http://192.168.0.4:5173'],
     credentials: true,
   });
 

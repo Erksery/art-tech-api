@@ -9,8 +9,8 @@ export const STATUS_VALUES = {
 } as const;
 
 export const ROLE_VALUES = {
-  USER: 'Admin',
-  ADMIN: 'User',
+  USER: 'User',
+  ADMIN: 'Admin',
 } as const;
 
 export const SHARING_VALUES = {

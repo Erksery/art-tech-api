@@ -16,14 +16,13 @@ export class AuthGuard implements CanActivate {
     const request = context.switchToHttp().getRequest();
 
     const accessToken = request.cookies?.accessToken;
-    console.log(request.cookies);
     const authHeader = request.headers['authorization'];
     const refreshToken = authHeader?.startsWith('Bearer ')
       ? authHeader.split(' ')[1]
       : null;
 
     if (!accessToken) {
-      throw new ForbiddenException('Токен авторизации отсутствует');
+      throw new UnauthorizedException('Токен авторизации отсутствует');
     }
 
     try {

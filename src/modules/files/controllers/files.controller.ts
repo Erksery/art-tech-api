@@ -35,8 +35,8 @@ import { extname } from 'path';
 
 @Controller('files')
 @UseGuards(AuthGuard, RolesGuard, StatusGuard)
-@Roles(RolesConfig.all)
-@Status(StatusConfig.approved)
+@Roles(...RolesConfig.all)
+@Status(...StatusConfig.approved)
 export class FilesController {
   constructor(private filesService: FilesService) {}
 

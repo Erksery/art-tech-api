@@ -30,8 +30,8 @@ import { EditFolderDto } from '../dto/editFolder.dto';
 
 @Controller('folders')
 @UseGuards(AuthGuard, RolesGuard, StatusGuard)
-@Roles(RolesConfig.all)
-@Status(StatusConfig.approved)
+@Roles()
+@Status(...StatusConfig.approved)
 export class FolderController {
   constructor(private readonly folderService: FolderService) {}
 

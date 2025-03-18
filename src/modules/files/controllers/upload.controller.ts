@@ -5,16 +5,14 @@ import {
   Post,
   Param,
   Req,
+  UploadedFile,
   UseGuards,
   UseInterceptors,
-  UploadedFile,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
-
 import { Request } from 'express';
 import { extname, join } from 'path';
 import { createWriteStream } from 'fs';
-
 import { FilesService } from '../services/files.service';
 import { AuthGuard } from 'src/auth/guard/auth.guard';
 import { RolesGuard } from 'src/auth/guard/roles.guard';
@@ -24,11 +22,12 @@ import { Roles } from 'src/auth/decorators/roles.decorator';
 import { Status } from 'src/auth/decorators/status.decorator';
 import { RolesConfig } from 'src/config/roles.config';
 import { StatusConfig } from 'src/config/status.config';
+import { existsSync, mkdirSync } from 'fs';
 
 @Controller('upload')
 @UseGuards(AuthGuard, RolesGuard, StatusGuard)
-@Roles(RolesConfig.all)
-@Status(StatusConfig.approved)
+@Roles(...RolesConfig.all)
+@Status(...StatusConfig.approved)
 export class UploadController {
   constructor(private filesService: FilesService) {}
 
@@ -45,13 +44,22 @@ export class UploadController {
       return { message: 'Файл не загружен' };
     }
 
-    const fileName = `${Date.now()}-${Math.round(Math.random() * 1e9)}${extname(file.originalname)}`;
-    const filePath = join(__dirname, '../../../../uploads', fileName);
+    const uploadDir = `../../../../${process.env.UPLOAD_FOLDER || 'uploads'}`;
+    if (!existsSync(uploadDir)) {
+      mkdirSync(uploadDir, { recursive: true });
+    }
 
+    const fileName = `${Date.now()}-${Math.round(Math.random() * 1e9)}${extname(file.originalname)}`;
+    const filePath = join(uploadDir, fileName);
+
+    // Используем потоковую запись для записи файла на диск
     return new Promise((resolve, reject) => {
       const writeStream = createWriteStream(filePath);
+
+      // Записываем файл через поток
       writeStream.write(file.buffer);
       writeStream.end();
+
       writeStream.on('finish', async () => {
         const savedFile = await this.filesService.fileUpload(
           folderId,
@@ -60,6 +68,7 @@ export class UploadController {
         );
         resolve(savedFile);
       });
+
       writeStream.on('error', (err) => reject(err));
     });
   }
