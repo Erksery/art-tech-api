@@ -4,14 +4,11 @@ import {
   Get,
   HttpCode,
   HttpStatus,
-  Post,
   Delete,
   Param,
   Req,
   UseGuards,
   Patch,
-  UseInterceptors,
-  UploadedFile,
   Res,
   NotFoundException,
 } from '@nestjs/common';
@@ -20,7 +17,6 @@ import { FilesService } from '../services/files.service';
 import { AuthGuard } from 'src/auth/guard/auth.guard';
 import { RolesGuard } from 'src/auth/guard/roles.guard';
 import { FindGuard } from 'src/auth/guard/file/find.guard';
-import { CreateFileGuard } from 'src/auth/guard/file/createFile.guard';
 import { EditFileGuard } from 'src/auth/guard/file/editFile.guard';
 import { DeleteFileGuard } from 'src/auth/guard/file/deleteFile.guard';
 import { StatusGuard } from 'src/auth/guard/status.guard';
@@ -28,34 +24,38 @@ import { Roles } from 'src/auth/decorators/roles.decorator';
 import { Status } from 'src/auth/decorators/status.decorator';
 import { RolesConfig } from 'src/config/roles.config';
 import { StatusConfig } from 'src/config/status.config';
-import { FileInterceptor } from '@nestjs/platform-express';
+import { SITE_CONTROLLER, SITE_ROUTES } from '../routes/site.routes';
+import { PARAMS_VALUES } from 'src/config/constants.config';
 
-import { diskStorage } from 'multer';
-import { extname } from 'path';
-
-@Controller('files')
+@Controller(SITE_CONTROLLER.FILE)
 @UseGuards(AuthGuard, RolesGuard, StatusGuard)
-@Roles(...RolesConfig.all)
+@Roles()
 @Status(...StatusConfig.approved)
 export class FilesController {
   constructor(private filesService: FilesService) {}
 
-  @Get('folder/:folderId')
+  @Get(SITE_ROUTES.FIND_ALL)
   @UseGuards(FindGuard)
-  async findAll(@Param('folderId') folderId: string, @Req() req: Request) {
+  async findAll(
+    @Param(PARAMS_VALUES.FOLDER_ID) folderId: string,
+    @Req() req: Request,
+  ) {
     return this.filesService.findAll(folderId, req);
   }
 
-  @Get('folder/:folderId/file/:fileId')
+  @Get(SITE_ROUTES.FIND_ONE)
   @UseGuards(FindGuard)
-  async findOne(@Param('fileId') fileId: string, @Req() req: Request) {
+  async findOne(
+    @Param(PARAMS_VALUES.FILE_ID) fileId: string,
+    @Req() req: Request,
+  ) {
     return this.filesService.findOne(fileId, req);
   }
 
-  @Get('image/:fileId')
+  @Get(SITE_ROUTES.GET_IMAGE)
   @UseGuards(FindGuard)
   async getImage(
-    @Param('fileId') fileId: string,
+    @Param(PARAMS_VALUES.FILE_ID) fileId: string,
     @Req() req: Request,
     @Res() res: Response,
   ) {
@@ -67,10 +67,10 @@ export class FilesController {
     return res.sendFile(file);
   }
 
-  @Get('download/:fileId')
+  @Get(SITE_ROUTES.DOWNLOAD)
   @UseGuards(FindGuard)
   async downloadFile(
-    @Param('fileId') fileId: string,
+    @Param(PARAMS_VALUES.FILE_ID) fileId: string,
     @Req() req: Request,
     @Res() res: Response,
   ) {
@@ -83,47 +83,24 @@ export class FilesController {
     return res.download(filePath);
   }
 
-  @Post('upload/:folderId')
-  @HttpCode(HttpStatus.CREATED)
-  @UseGuards(CreateFileGuard)
-  @UseInterceptors(
-    FileInterceptor('file', {
-      storage: diskStorage({
-        destination: `./${process.env.UPLOAD_FOLDER}`,
-        filename: (req, file, cb) => {
-          const uniqueSuffix =
-            Date.now() + '-' + Math.round(Math.random() * 1e9);
-          cb(
-            null,
-            `${file.fieldname}-${uniqueSuffix}${extname(file.originalname)}`,
-          );
-        },
-      }),
-    }),
-  )
-  async uploadFile(
-    @Param('folderId') folderId: string,
-    @UploadedFile() file: Express.Multer.File,
-    @Req() req: Request,
-  ) {
-    return this.filesService.fileUpload(folderId, file, req);
-  }
-
-  @Patch('folder/:folderId/file/:fileId')
+  @Patch(SITE_ROUTES.EDIT)
   @HttpCode(HttpStatus.OK)
   @UseGuards(EditFileGuard)
   async edit(
-    @Param('fileId') fileId: string,
+    @Param(PARAMS_VALUES.FILE_ID) fileId: string,
     @Body() data,
     @Req() req: Request,
   ) {
     return this.filesService.edit(fileId, data, req);
   }
 
-  @Delete('folder/:folderId/file/:fileId')
+  @Delete(SITE_ROUTES.DELETE)
   @HttpCode(HttpStatus.NO_CONTENT)
   @UseGuards(DeleteFileGuard)
-  async delete(@Param('fileId') fileId: string, @Req() req: Request) {
+  async delete(
+    @Param(PARAMS_VALUES.FILE_ID) fileId: string,
+    @Req() req: Request,
+  ) {
     return this.filesService.delete(fileId, req);
   }
 }

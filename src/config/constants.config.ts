@@ -18,6 +18,11 @@ export const SHARING_VALUES = {
   EDITING: 'Editing',
 } as const;
 
+export const PARAMS_VALUES = {
+  FOLDER_ID: 'folderId',
+  FILE_ID: 'fileId',
+};
+
 export type PrivacyType = (typeof PRIVACY_VALUES)[keyof typeof PRIVACY_VALUES];
 export type StatusType = (typeof STATUS_VALUES)[keyof typeof STATUS_VALUES];
 export type RoleType = (typeof ROLE_VALUES)[keyof typeof ROLE_VALUES];

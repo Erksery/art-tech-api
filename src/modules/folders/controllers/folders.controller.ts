@@ -27,20 +27,22 @@ import { StatusConfig } from 'src/config/status.config';
 import { RolesConfig } from 'src/config/roles.config';
 import { CreateFolderDto } from '../dto/createFolder.dto';
 import { EditFolderDto } from '../dto/editFolder.dto';
+import { SITE_CONTROLLER, SITE_ROUTES } from '../routes/site.routes';
+import { PARAMS_VALUES } from 'src/config/constants.config';
 
-@Controller('folders')
+@Controller(SITE_CONTROLLER.FOLDER)
 @UseGuards(AuthGuard, RolesGuard, StatusGuard)
 @Roles()
 @Status(...StatusConfig.approved)
 export class FolderController {
   constructor(private readonly folderService: FolderService) {}
 
-  @Get('/')
+  @Get(SITE_ROUTES.GET)
   async findAll(@Req() req: Request) {
     return this.folderService.get(req);
   }
 
-  @Post('/')
+  @Post(SITE_ROUTES.CREATE)
   @HttpCode(HttpStatus.CREATED)
   @UseGuards(CreateFolderGuard)
   @UsePipes(new ValidationPipe({ whitelist: true }))
@@ -48,17 +50,20 @@ export class FolderController {
     return this.folderService.create(data.folderId || null, data, req);
   }
 
-  @Patch('/:folderId')
+  @Patch(SITE_ROUTES.EDIT)
   @HttpCode(HttpStatus.OK)
   @UseGuards(EditFolderGuard)
-  async edit(@Param('folderId') folderId: string, @Body() data: EditFolderDto) {
+  async edit(
+    @Param(PARAMS_VALUES.FOLDER_ID) folderId: string,
+    @Body() data: EditFolderDto,
+  ) {
     return this.folderService.edit(folderId, data);
   }
 
-  @Delete('/:folderId')
+  @Delete(SITE_ROUTES.DELETE)
   @HttpCode(HttpStatus.OK)
   @UseGuards(DeleteFolderGuard)
-  async delete(@Param('folderId') folderId: string) {
+  async delete(@Param(PARAMS_VALUES.FOLDER_ID) folderId: string) {
     return this.folderService.delete(folderId);
   }
 }

@@ -23,15 +23,16 @@ import { Status } from 'src/auth/decorators/status.decorator';
 import { RolesConfig } from 'src/config/roles.config';
 import { StatusConfig } from 'src/config/status.config';
 import { existsSync, mkdirSync } from 'fs';
+import { SITE_CONTROLLER, SITE_ROUTES } from '../routes/site.routes';
 
-@Controller('upload')
+@Controller(SITE_CONTROLLER.UPLOAD)
 @UseGuards(AuthGuard, RolesGuard, StatusGuard)
 @Roles(...RolesConfig.all)
 @Status(...StatusConfig.approved)
 export class UploadController {
   constructor(private filesService: FilesService) {}
 
-  @Post(':folderId')
+  @Post(SITE_ROUTES.UPLOAD)
   @HttpCode(HttpStatus.CREATED)
   @UseGuards(CreateFileGuard)
   @UseInterceptors(FileInterceptor('file'))

@@ -5,8 +5,13 @@ import {
 } from '@nestjs/common';
 import { Token } from 'src/models/token.model';
 
-export const logoutUser = async (refreshToken, tokenModel: typeof Token) => {
+export const logoutUser = async (
+  refreshToken,
+  tokenModel: typeof Token,
+  res,
+) => {
   try {
+    console.log(refreshToken);
     const deleted = await tokenModel.destroy({
       where: { token: refreshToken },
     });
@@ -14,8 +19,7 @@ export const logoutUser = async (refreshToken, tokenModel: typeof Token) => {
     if (!deleted) {
       throw new UnauthorizedException('Пользователь не авторизован');
     }
-
-    return { message: 'Выход выполнен успешно' };
+    res.clearCookie('accessToken');
   } catch (err) {
     if (err instanceof UnauthorizedException) {
       throw err;
