@@ -10,6 +10,7 @@ import { loginUser } from './utils/loginUser';
 import { logoutUser } from './utils/logoutUser';
 import { refreshUserToken } from './utils/refreshUserToken';
 import { Response } from 'express';
+import { getProfile } from './utils/getProfile';
 
 @Injectable()
 export class UserService {
@@ -71,5 +72,9 @@ export class UserService {
       maxAge: 15 * 60 * 1000,
     });
     return res.json({ accessToken });
+  }
+
+  async getProfile(req) {
+    return await getProfile(this.userModel, req.user.id);
   }
 }

@@ -55,16 +55,21 @@ export class FilesController {
   @Get(SITE_ROUTES.GET_IMAGE)
   @UseGuards(FindGuard)
   async getImage(
-    @Param(PARAMS_VALUES.FILE_ID) fileId: string,
+    @Param(PARAMS_VALUES.FILE_NAME) fileName: string,
     @Req() req: Request,
     @Res() res: Response,
   ) {
-    const file = await this.filesService.getFilePath(fileId, req);
+    const filePath = await this.filesService.getFilePath(fileName, req);
 
-    if (!file) {
+    if (!filePath) {
       throw new NotFoundException('Файл не найден');
     }
-    return res.sendFile(file);
+    res.sendFile(filePath, (err) => {
+      if (err) {
+        console.error('Ошибка при отправке файла:', err);
+        res.status(500).send('Ошибка при отправке файла');
+      }
+    });
   }
 
   @Get(SITE_ROUTES.DOWNLOAD)

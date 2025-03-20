@@ -2,30 +2,35 @@ import { HttpException, HttpStatus } from '@nestjs/common';
 import { join } from 'path';
 import { File } from 'src/models/file.model';
 
-export const getFilePath = async (fileModel: typeof File, fileId: string) => {
+export const getFileContent = async (
+  fileModel: typeof File,
+  fileName: string,
+) => {
   try {
-    if (!fileId) {
-      throw new HttpException(`Отсутствует id файла`, HttpStatus.NOT_FOUND);
+    if (!fileName) {
+      throw new HttpException('Отсутствует id файла', HttpStatus.NOT_FOUND);
     }
-    const file = await fileModel.findOne({ where: { id: fileId } });
-
-    if (!file) {
-      throw new HttpException(
-        `Файл с id: ${fileId} не найден`,
-        HttpStatus.NOT_FOUND,
-      );
-    }
-
     const filePath = join(
       __dirname,
       '..',
       '..',
+      '..',
+      '..',
+      '..',
       process.env.UPLOAD_FOLDER || 'uploads',
-      file.name,
+      fileName,
     );
+
+    if (!filePath) {
+      throw new HttpException('Картинка не найдена', HttpStatus.NOT_FOUND);
+    }
 
     return filePath;
   } catch (err) {
-    console.error('Ошибка при получении файла', err);
+    console.error('Ошибка при чтении файла:', err);
+    throw new HttpException(
+      'Ошибка при чтении файла',
+      HttpStatus.INTERNAL_SERVER_ERROR,
+    );
   }
 };

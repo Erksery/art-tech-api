@@ -8,6 +8,7 @@ import {
   UploadedFile,
   UseGuards,
   UseInterceptors,
+  HttpException,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { Request } from 'express';
@@ -41,36 +42,49 @@ export class UploadController {
     @UploadedFile() file: Express.Multer.File,
     @Req() req: Request,
   ) {
-    if (!file) {
-      return { message: 'Файл не загружен' };
-    }
-
-    const uploadDir = `../../../../${process.env.UPLOAD_FOLDER || 'uploads'}`;
-    if (!existsSync(uploadDir)) {
-      mkdirSync(uploadDir, { recursive: true });
+    if (!file || !file.originalname || !file.mimetype) {
+      return { message: 'Файл не загружен или отсутствуют необходимые данные' };
     }
 
     const fileName = `${Date.now()}-${Math.round(Math.random() * 1e9)}${extname(file.originalname)}`;
-    const filePath = join(uploadDir, fileName);
+    const filePath = join('uploads', fileName);
 
-    // Используем потоковую запись для записи файла на диск
     return new Promise((resolve, reject) => {
       const writeStream = createWriteStream(filePath);
 
-      // Записываем файл через поток
       writeStream.write(file.buffer);
+      console.log(file);
       writeStream.end();
 
       writeStream.on('finish', async () => {
-        const savedFile = await this.filesService.fileUpload(
-          folderId,
-          file,
-          req,
-        );
-        resolve(savedFile);
+        try {
+          const savedFile = await this.filesService.fileUpload(
+            folderId,
+            fileName,
+            file,
+            req,
+          );
+          resolve(savedFile);
+        } catch (err) {
+          console.error('Ошибка при сохранении файла в базе данных:', err);
+          reject(
+            new HttpException(
+              'Ошибка при сохранении файла',
+              HttpStatus.INTERNAL_SERVER_ERROR,
+            ),
+          );
+        }
       });
 
-      writeStream.on('error', (err) => reject(err));
+      writeStream.on('error', (err) => {
+        console.error('Ошибка при записи файла:', err);
+        reject(
+          new HttpException(
+            'Ошибка при записи файла',
+            HttpStatus.INTERNAL_SERVER_ERROR,
+          ),
+        );
+      });
     });
   }
 }

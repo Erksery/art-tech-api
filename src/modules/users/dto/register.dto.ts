@@ -1,4 +1,5 @@
 import { IsString, Length } from 'class-validator';
+import { Exclude, Expose } from 'class-transformer';
 
 export class RegisterDto {
   @IsString()
@@ -9,8 +10,6 @@ export class RegisterDto {
   @Length(6, 24)
   password: string;
 }
-
-import { Exclude, Expose } from 'class-transformer';
 
 export class RegisterResponseDto {
   @Expose()

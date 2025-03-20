@@ -33,7 +33,7 @@ export class UserController {
 
   @Delete(SITE_ROUTES.LOGOUT)
   @UseGuards(AuthGuard)
-  @HttpCode(HttpStatus.NO_CONTENT)
+  @HttpCode(HttpStatus.OK)
   async logout(@Req() req: Request, @Res() res: Response) {
     const refreshToken = req.headers['authorization']?.split(' ')[1];
     return this.userService.logout(refreshToken, res);
@@ -46,7 +46,7 @@ export class UserController {
   }
   @Get(SITE_ROUTES.PROFILE)
   @UseGuards(AuthGuard)
-  async get(@Req() req: Request) {
-    return req.user;
+  async getProfile(@Req() req: Request) {
+    return this.userService.getProfile(req);
   }
 }

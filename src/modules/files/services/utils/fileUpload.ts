@@ -5,14 +5,19 @@ export const handleFileUpload = async (
   fileModel: typeof File,
   file,
   folderId: string,
+  fileName: string,
   user,
 ) => {
   try {
     if (!folderId) {
       throw new HttpException(`Отсутствует id папки`, HttpStatus.NOT_FOUND);
     }
+
+    if (!file) {
+      throw new HttpException('Файл отсутствует', HttpStatus.BAD_REQUEST);
+    }
     const createdFile = await fileModel.create({
-      name: file.filename,
+      name: fileName,
       originalFilename: file.originalname,
       creator: user.id,
       mimeType: file.mimetype,
@@ -22,7 +27,8 @@ export const handleFileUpload = async (
 
     return createdFile;
   } catch (err) {
-    console.log('Ошибка при создании файла', err);
+    console.error('Ошибка при создании файла', err);
+
     throw new HttpException(
       'Ошибка при создании файла',
       HttpStatus.INTERNAL_SERVER_ERROR,

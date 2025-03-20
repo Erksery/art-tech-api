@@ -7,7 +7,7 @@ import { findOneFile } from './utils/findOneFile';
 import { handleFileUpload } from './utils/fileUpload';
 import { editFile } from './utils/editFile';
 import { deleteFile } from './utils/deleteFile';
-import { getFilePath } from './utils/getFilePath';
+import { getFileContent } from './utils/getFilePath';
 
 @Injectable()
 export class FilesService {
@@ -21,12 +21,18 @@ export class FilesService {
     return await findOneFile(this.fileModel, fileId);
   }
 
-  async getFilePath(fileId: string, req: Request) {
-    return await getFilePath(this.fileModel, fileId);
+  async getFilePath(fileName: string, req: Request) {
+    return await getFileContent(this.fileModel, fileName);
   }
 
-  async fileUpload(folderId: string, file, req: Request) {
-    return await handleFileUpload(this.fileModel, file, folderId, req.user);
+  async fileUpload(folderId: string, fileName: string, file, req: Request) {
+    return await handleFileUpload(
+      this.fileModel,
+      file,
+      folderId,
+      fileName,
+      req.user,
+    );
   }
 
   async edit(fileId: string, data, req: Request) {

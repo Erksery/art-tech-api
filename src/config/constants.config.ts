@@ -21,6 +21,7 @@ export const SHARING_VALUES = {
 export const PARAMS_VALUES = {
   FOLDER_ID: 'folderId',
   FILE_ID: 'fileId',
+  FILE_NAME: 'fileName',
 };
 
 export type PrivacyType = (typeof PRIVACY_VALUES)[keyof typeof PRIVACY_VALUES];
