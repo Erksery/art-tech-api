@@ -67,7 +67,9 @@ export class FilesController {
     res.sendFile(filePath, (err) => {
       if (err) {
         console.error('Ошибка при отправке файла:', err);
-        res.status(500).send('Ошибка при отправке файла');
+        if (!res.headersSent) {
+          res.status(500).send('Ошибка при отправке файла');
+        }
       }
     });
   }
@@ -100,7 +102,7 @@ export class FilesController {
   }
 
   @Delete(SITE_ROUTES.DELETE)
-  @HttpCode(HttpStatus.NO_CONTENT)
+  @HttpCode(HttpStatus.OK)
   @UseGuards(DeleteFileGuard)
   async delete(
     @Param(PARAMS_VALUES.FILE_ID) fileId: string,

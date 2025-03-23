@@ -52,9 +52,15 @@ export class UploadController {
     return new Promise((resolve, reject) => {
       const writeStream = createWriteStream(filePath);
 
-      writeStream.write(file.buffer);
-      console.log(file);
-      writeStream.end();
+      writeStream.on('error', (err) => {
+        console.error('Ошибка при записи файла:', err);
+        reject(
+          new HttpException(
+            'Ошибка при записи файла',
+            HttpStatus.INTERNAL_SERVER_ERROR,
+          ),
+        );
+      });
 
       writeStream.on('finish', async () => {
         try {
@@ -76,15 +82,8 @@ export class UploadController {
         }
       });
 
-      writeStream.on('error', (err) => {
-        console.error('Ошибка при записи файла:', err);
-        reject(
-          new HttpException(
-            'Ошибка при записи файла',
-            HttpStatus.INTERNAL_SERVER_ERROR,
-          ),
-        );
-      });
+      writeStream.write(file.buffer);
+      writeStream.end();
     });
   }
 }
