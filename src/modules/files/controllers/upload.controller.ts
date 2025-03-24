@@ -23,7 +23,6 @@ import { Roles } from 'src/auth/decorators/roles.decorator';
 import { Status } from 'src/auth/decorators/status.decorator';
 import { RolesConfig } from 'src/config/roles.config';
 import { StatusConfig } from 'src/config/status.config';
-import { existsSync, mkdirSync } from 'fs';
 import { SITE_CONTROLLER, SITE_ROUTES } from '../routes/site.routes';
 
 @Controller(SITE_CONTROLLER.UPLOAD)
@@ -47,10 +46,13 @@ export class UploadController {
     }
 
     const fileName = `${Date.now()}-${Math.round(Math.random() * 1e9)}${extname(file.originalname)}`;
+
     const filePath = join('uploads', fileName);
 
     return new Promise((resolve, reject) => {
       const writeStream = createWriteStream(filePath);
+      let uploadedBytes = 0;
+      const totalBytes = file.buffer.length;
 
       writeStream.on('error', (err) => {
         console.error('Ошибка при записи файла:', err);
@@ -67,6 +69,7 @@ export class UploadController {
           const savedFile = await this.filesService.fileUpload(
             folderId,
             fileName,
+            file.originalname,
             file,
             req,
           );
@@ -82,6 +85,12 @@ export class UploadController {
         }
       });
 
+      writeStream.on('data', (chunk) => {
+        uploadedBytes += chunk.length;
+        const progress = Math.round((uploadedBytes / totalBytes) * 100);
+        // Отправка progress клиенту через WebSocket или SSE
+        console.log(`Загружено: ${progress}%`);
+      });
       writeStream.write(file.buffer);
       writeStream.end();
     });

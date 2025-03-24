@@ -6,6 +6,7 @@ export const handleFileUpload = async (
   file,
   folderId: string,
   fileName: string,
+  originalName: string,
   user,
 ) => {
   try {
@@ -18,7 +19,7 @@ export const handleFileUpload = async (
     }
     const createdFile = await fileModel.create({
       name: fileName,
-      originalFilename: file.originalname,
+      originalFilename: originalName,
       creator: user.id,
       mimeType: file.mimetype,
       size: file.size,

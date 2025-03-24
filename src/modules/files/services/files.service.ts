@@ -25,12 +25,19 @@ export class FilesService {
     return await getFileContent(this.fileModel, fileName);
   }
 
-  async fileUpload(folderId: string, fileName: string, file, req: Request) {
+  async fileUpload(
+    folderId: string,
+    fileName: string,
+    originalName: string,
+    file,
+    req: Request,
+  ) {
     return await handleFileUpload(
       this.fileModel,
       file,
       folderId,
       fileName,
+      originalName,
       req.user,
     );
   }
