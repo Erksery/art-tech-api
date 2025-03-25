@@ -5,14 +5,13 @@ import {
   Post,
   Param,
   Req,
-  UploadedFile,
+  Res,
   UseGuards,
-  UseInterceptors,
   HttpException,
 } from '@nestjs/common';
-import { FileInterceptor } from '@nestjs/platform-express';
-import { Request } from 'express';
-import { extname, join } from 'path';
+import Busboy from 'busboy';
+import { Request, Response } from 'express';
+import { join } from 'path';
 import { createWriteStream } from 'fs';
 import { FilesService } from '../services/files.service';
 import { AuthGuard } from 'src/auth/guard/auth.guard';
@@ -35,64 +34,72 @@ export class UploadController {
   @Post(SITE_ROUTES.UPLOAD)
   @HttpCode(HttpStatus.CREATED)
   @UseGuards(CreateFileGuard)
-  @UseInterceptors(FileInterceptor('file'))
   async uploadFile(
     @Param('folderId') folderId: string,
-    @UploadedFile() file: Express.Multer.File,
     @Req() req: Request,
+    @Res() res: Response,
   ) {
-    if (!file || !file.originalname || !file.mimetype) {
-      return { message: 'Файл не загружен или отсутствуют необходимые данные' };
-    }
+    const busboy = Busboy({ headers: req.headers });
+    const uploadDir = join(process.cwd(), 'uploads');
 
-    const fileName = `${Date.now()}-${Math.round(Math.random() * 1e9)}${extname(file.originalname)}`;
+    let originalName = '';
+    let savedFile: any;
+    let fileSize = 0;
+    let fileMimeType = '';
+    let fileEncoding = '';
 
-    const filePath = join('uploads', fileName);
+    busboy.on('file', (fieldname, file, fileInfo) => {
+      originalName = Buffer.from(fileInfo.filename, 'latin1').toString('utf8');
+      fileMimeType = fileInfo.mimeType;
+      fileEncoding = fileInfo.encoding;
 
-    return new Promise((resolve, reject) => {
-      const writeStream = createWriteStream(filePath);
-      let uploadedBytes = 0;
-      const totalBytes = file.buffer.length;
+      const uniqueName = `${Date.now()}-${Math.round(Math.random() * 1e9)}-${originalName}`;
+      const savePath = join(uploadDir, uniqueName);
 
-      writeStream.on('error', (err) => {
-        console.error('Ошибка при записи файла:', err);
-        reject(
-          new HttpException(
-            'Ошибка при записи файла',
-            HttpStatus.INTERNAL_SERVER_ERROR,
-          ),
-        );
+      const writeStream = createWriteStream(savePath);
+
+      file.on('data', (chunk) => {
+        fileSize += chunk.length;
+        console.log(`Загружено: ${fileSize} байт`);
       });
+
+      file.on('end', () => {
+        console.log(`Файл ${originalName} успешно загружен.`);
+      });
+
+      file.on('error', (err) => {
+        console.error('Ошибка при записи файла:', err);
+        res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
+          message: 'Ошибка при записи файла',
+        });
+      });
+
+      file.pipe(writeStream);
 
       writeStream.on('finish', async () => {
         try {
-          const savedFile = await this.filesService.fileUpload(
+          savedFile = await this.filesService.fileUpload(
             folderId,
-            fileName,
-            file.originalname,
-            file,
+            uniqueName,
+            originalName,
+            { mimetype: fileMimeType, encoding: fileEncoding, size: fileSize },
             req,
           );
-          resolve(savedFile);
+          //console.log('Информация о файле успешно сохранена в БД:', savedFile);
+
+          res.status(HttpStatus.CREATED).json({
+            message: 'Файл успешно загружен и сохранён в БД',
+            file: savedFile,
+          });
         } catch (err) {
-          console.error('Ошибка при сохранении файла в базе данных:', err);
-          reject(
-            new HttpException(
-              'Ошибка при сохранении файла',
-              HttpStatus.INTERNAL_SERVER_ERROR,
-            ),
-          );
+          console.error('Ошибка при сохранении файла в БД:', err);
+          res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
+            message: 'Ошибка при сохранении файла в БД',
+          });
         }
       });
-
-      writeStream.on('data', (chunk) => {
-        uploadedBytes += chunk.length;
-        const progress = Math.round((uploadedBytes / totalBytes) * 100);
-        // Отправка progress клиенту через WebSocket или SSE
-        console.log(`Загружено: ${progress}%`);
-      });
-      writeStream.write(file.buffer);
-      writeStream.end();
     });
+
+    req.pipe(busboy);
   }
 }

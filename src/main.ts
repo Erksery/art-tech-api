@@ -4,7 +4,7 @@ import { NestExpressApplication } from '@nestjs/platform-express';
 import { ValidationPipe } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 
-import * as cookieParser from 'cookie-parser';
+import cookieParser from 'cookie-parser';
 import { join } from 'path';
 import { existsSync, mkdirSync } from 'fs';
 
@@ -29,7 +29,11 @@ async function bootstrap() {
   app.use(cookieParser());
 
   app.enableCors({
-    origin: ['http://192.168.1.212:5173', 'http://192.168.0.4:5173'],
+    origin: [
+      'http://192.168.1.212:5173',
+      'http://192.168.0.4:5173',
+      'http://192.168.0.3:5173',
+    ],
     credentials: true,
   });
 

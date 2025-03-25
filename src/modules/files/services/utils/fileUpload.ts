@@ -3,10 +3,10 @@ import { File } from 'src/models/file.model';
 
 export const handleFileUpload = async (
   fileModel: typeof File,
-  file,
   folderId: string,
   fileName: string,
   originalName: string,
+  file,
   user,
 ) => {
   try {

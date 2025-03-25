@@ -34,10 +34,10 @@ export class FilesService {
   ) {
     return await handleFileUpload(
       this.fileModel,
-      file,
       folderId,
       fileName,
       originalName,
+      file,
       req.user,
     );
   }
