@@ -11,6 +11,7 @@ import { logoutUser } from './utils/logoutUser';
 import { refreshUserToken } from './utils/refreshUserToken';
 import { Response } from 'express';
 import { getProfile } from './utils/getProfile';
+import { getUser } from './utils/getUser';
 
 @Injectable()
 export class UserService {
@@ -76,5 +77,9 @@ export class UserService {
 
   async getProfile(req) {
     return await getProfile(this.userModel, req.user.id);
+  }
+
+  async getUser(userId: string) {
+    return await getUser(this.userModel, userId);
   }
 }

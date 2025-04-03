@@ -22,6 +22,7 @@ export const PARAMS_VALUES = {
   FOLDER_ID: 'folderId',
   FILE_ID: 'fileId',
   FILE_NAME: 'fileName',
+  USER_ID: 'userId',
 };
 
 export type PrivacyType = (typeof PRIVACY_VALUES)[keyof typeof PRIVACY_VALUES];

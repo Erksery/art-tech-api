@@ -15,7 +15,8 @@ export const editFile = async (
         HttpStatus.NOT_FOUND,
       );
     }
-    await file.update({ name: data.name });
+
+    const editFile = await file.update(data.editData);
 
     return file;
   } catch (err) {

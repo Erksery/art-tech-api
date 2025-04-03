@@ -5,6 +5,7 @@ import {
   Get,
   HttpCode,
   HttpStatus,
+  Param,
   Post,
   Req,
   Res,
@@ -16,6 +17,7 @@ import { LoginDto } from '../dto/login.dto';
 import { AuthGuard } from 'src/auth/guard/auth.guard';
 import { UserService } from '../services/user.service';
 import { SITE_CONTROLLER, SITE_ROUTES } from '../routes/site.routes';
+import { PARAMS_VALUES } from 'src/config/constants.config';
 
 @Controller(SITE_CONTROLLER.AUTH)
 export class UserController {
@@ -48,5 +50,11 @@ export class UserController {
   @UseGuards(AuthGuard)
   async getProfile(@Req() req: Request) {
     return this.userService.getProfile(req);
+  }
+  @Get(SITE_ROUTES.USER)
+  @UseGuards(AuthGuard)
+  async getUser(@Param(PARAMS_VALUES.USER_ID) userId: string) {
+    console.log(userId);
+    return this.userService.getUser(userId);
   }
 }

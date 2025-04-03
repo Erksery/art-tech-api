@@ -6,4 +6,5 @@ export const SITE_ROUTES = {
   LOGOUT: 'logout',
   REFRESH: 'refresh',
   PROFILE: 'profile',
+  USER: ':userId',
 } as const;
