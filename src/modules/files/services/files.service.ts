@@ -13,8 +13,8 @@ import { getFileContent } from './utils/getFilePath';
 export class FilesService {
   constructor(@InjectModel(File) private fileModel: typeof File) {}
 
-  async findAll(folderId: string, req: Request) {
-    return await findAllFiles(this.fileModel, folderId);
+  async findAll(folderId: string, order?: string, filter?: string) {
+    return await findAllFiles(this.fileModel, folderId, order, filter);
   }
 
   async findOne(fileId: string, req: Request) {

@@ -25,6 +25,11 @@ export const PARAMS_VALUES = {
   USER_ID: 'userId',
 };
 
+export const QUERY_VALUES = {
+  ORDER: 'order',
+  FILTER: 'filter',
+};
+
 export type PrivacyType = (typeof PRIVACY_VALUES)[keyof typeof PRIVACY_VALUES];
 export type StatusType = (typeof STATUS_VALUES)[keyof typeof STATUS_VALUES];
 export type RoleType = (typeof ROLE_VALUES)[keyof typeof ROLE_VALUES];

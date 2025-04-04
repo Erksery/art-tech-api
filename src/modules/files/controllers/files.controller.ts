@@ -11,6 +11,7 @@ import {
   Patch,
   Res,
   NotFoundException,
+  Query,
 } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { FilesService } from '../services/files.service';
@@ -25,7 +26,7 @@ import { Status } from 'src/auth/decorators/status.decorator';
 import { RolesConfig } from 'src/config/roles.config';
 import { StatusConfig } from 'src/config/status.config';
 import { SITE_CONTROLLER, SITE_ROUTES } from '../routes/site.routes';
-import { PARAMS_VALUES } from 'src/config/constants.config';
+import { PARAMS_VALUES, QUERY_VALUES } from 'src/config/constants.config';
 
 @Controller(SITE_CONTROLLER.FILE)
 @UseGuards(AuthGuard, RolesGuard, StatusGuard)
@@ -39,8 +40,10 @@ export class FilesController {
   async findAll(
     @Param(PARAMS_VALUES.FOLDER_ID) folderId: string,
     @Req() req: Request,
+    @Query(QUERY_VALUES.ORDER) order?: string,
+    @Query(QUERY_VALUES.FILTER) filter?: string,
   ) {
-    return this.filesService.findAll(folderId, req);
+    return this.filesService.findAll(folderId, order, filter);
   }
 
   @Get(SITE_ROUTES.FIND_ONE)
