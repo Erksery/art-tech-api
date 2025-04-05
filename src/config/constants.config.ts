@@ -28,6 +28,13 @@ export const PARAMS_VALUES = {
 export const QUERY_VALUES = {
   ORDER: 'order',
   FILTER: 'filter',
+  SEARCH: 'searchValue',
+  LOCATION: 'location',
+};
+
+export const LOCATION_VALUER = {
+  LOCAL: 'local',
+  GLOBAL: 'global',
 };
 
 export type PrivacyType = (typeof PRIVACY_VALUES)[keyof typeof PRIVACY_VALUES];

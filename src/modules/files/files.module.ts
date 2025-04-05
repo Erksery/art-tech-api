@@ -5,9 +5,10 @@ import { FilesService } from './services/files.service';
 import { File } from 'src/models/file.model';
 import { AuthModule } from 'src/auth/auth.module';
 import { UploadController } from './controllers/upload.controller';
+import { Folder } from 'src/models/folder.model';
 
 @Module({
-  imports: [SequelizeModule.forFeature([File]), AuthModule],
+  imports: [SequelizeModule.forFeature([File, Folder]), AuthModule],
   providers: [FilesService],
   controllers: [FilesController, UploadController],
 })

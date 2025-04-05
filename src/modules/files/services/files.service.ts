@@ -8,17 +8,43 @@ import { handleFileUpload } from './utils/fileUpload';
 import { editFile } from './utils/editFile';
 import { deleteFile } from './utils/deleteFile';
 import { getFileContent } from './utils/getFilePath';
+import { searchAllFiles } from './utils/searchAllFiles';
+import { Folder } from 'src/models/folder.model';
 
 @Injectable()
 export class FilesService {
-  constructor(@InjectModel(File) private fileModel: typeof File) {}
+  constructor(
+    @InjectModel(File) private fileModel: typeof File,
+    @InjectModel(Folder) private folderModel: typeof Folder,
+  ) {}
 
-  async findAll(folderId: string, order?: string, filter?: string) {
-    return await findAllFiles(this.fileModel, folderId, order, filter);
+  async findAll(
+    folderId: string,
+    order?: string,
+    filter?: string,
+    search?: string,
+  ) {
+    return await findAllFiles(this.fileModel, folderId, order, filter, search);
   }
 
-  async findOne(fileId: string, req: Request) {
+  async findOne(fileId: string) {
     return await findOneFile(this.fileModel, fileId);
+  }
+
+  async searchAllFiles(
+    folderId: string,
+    searchValue: string,
+    location: string,
+    req: Request,
+  ) {
+    return await searchAllFiles(
+      this.fileModel,
+      this.folderModel,
+      folderId,
+      searchValue,
+      location,
+      req,
+    );
   }
 
   async getFilePath(fileName: string, req: Request) {

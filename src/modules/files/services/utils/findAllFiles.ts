@@ -7,33 +7,42 @@ export const findAllFiles = async (
   folderId: string,
   order?: string,
   filter?: string,
+  search?: string,
 ) => {
   try {
     if (!folderId) {
       throw new HttpException(`Отсутствует id папки`, HttpStatus.NOT_FOUND);
     }
 
-    let filters: any = {};
-    let orders: any = {};
+    const where: any = { folderId };
 
     if (filter) {
       const [key, value] = filter.split('=');
       if (key && value && key !== 'folderId') {
-        filters[key] = { [Op.like]: `%${value}%` };
+        where[key] = { [Op.like]: `%${value}%` };
       }
     }
 
+    if (search) {
+      const [key, value] = search.split('=');
+      if (key === 'search' && value) {
+        where.originalFilename = { [Op.like]: `%${value}%` };
+      }
+    }
+
+    let orderClause: any[] = [];
     if (order) {
       const [key, value] = order.split('=');
       if (key && value && ['ASC', 'DESC'].includes(value.toUpperCase())) {
-        orders = [[key, value.toUpperCase()]];
+        orderClause.push([key, value.toUpperCase()]);
       }
     }
 
     const files = await fileModel.findAll({
-      where: { folderId: folderId, ...filters },
-      order: orders,
+      where,
+      order: orderClause,
     });
+
     return files;
   } catch (err) {
     console.log('Ошибка при получении файлов', err);

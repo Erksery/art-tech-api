@@ -23,7 +23,6 @@ import { DeleteFileGuard } from 'src/auth/guard/file/deleteFile.guard';
 import { StatusGuard } from 'src/auth/guard/status.guard';
 import { Roles } from 'src/auth/decorators/roles.decorator';
 import { Status } from 'src/auth/decorators/status.decorator';
-import { RolesConfig } from 'src/config/roles.config';
 import { StatusConfig } from 'src/config/status.config';
 import { SITE_CONTROLLER, SITE_ROUTES } from '../routes/site.routes';
 import { PARAMS_VALUES, QUERY_VALUES } from 'src/config/constants.config';
@@ -39,20 +38,33 @@ export class FilesController {
   @UseGuards(FindGuard)
   async findAll(
     @Param(PARAMS_VALUES.FOLDER_ID) folderId: string,
-    @Req() req: Request,
     @Query(QUERY_VALUES.ORDER) order?: string,
     @Query(QUERY_VALUES.FILTER) filter?: string,
+    @Query(QUERY_VALUES.SEARCH) search?: string,
   ) {
-    return this.filesService.findAll(folderId, order, filter);
+    return this.filesService.findAll(folderId, order, filter, search);
+  }
+
+  @Get(SITE_ROUTES.SEARCH_ALL_FILES)
+  @UseGuards(FindGuard)
+  async searchAllFiles(
+    @Req() req: Request,
+    @Param(PARAMS_VALUES.FOLDER_ID) folderId: string,
+    @Query(QUERY_VALUES.SEARCH) searchValue: string,
+    @Query(QUERY_VALUES.LOCATION) location: string,
+  ) {
+    return this.filesService.searchAllFiles(
+      folderId,
+      searchValue,
+      location,
+      req,
+    );
   }
 
   @Get(SITE_ROUTES.FIND_ONE)
   @UseGuards(FindGuard)
-  async findOne(
-    @Param(PARAMS_VALUES.FILE_ID) fileId: string,
-    @Req() req: Request,
-  ) {
-    return this.filesService.findOne(fileId, req);
+  async findOne(@Param(PARAMS_VALUES.FILE_ID) fileId: string) {
+    return this.filesService.findOne(fileId);
   }
 
   @Get(SITE_ROUTES.GET_IMAGE)
