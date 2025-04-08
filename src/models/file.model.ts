@@ -1,4 +1,5 @@
 import {
+  BelongsTo,
   Column,
   DataType,
   ForeignKey,
@@ -38,4 +39,7 @@ export class File extends Model<
   @ForeignKey(() => Folder)
   @Column({ type: DataType.UUID, allowNull: false })
   declare folderId: string | null;
+
+  @BelongsTo(() => Folder, { onDelete: 'CASCADE' })
+  folder?: Folder;
 }

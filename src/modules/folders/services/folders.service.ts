@@ -8,7 +8,10 @@ import { deleteFolder } from './utils/deleteFolder';
 
 @Injectable()
 export class FolderService {
-  constructor(@InjectModel(Folder) private folderModel: typeof Folder) {}
+  constructor(
+    @InjectModel(Folder) private folderModel: typeof Folder,
+    @InjectModel(File) private fileModel: typeof File,
+  ) {}
 
   async get(req) {
     return await getFolders(this.folderModel, req.user);

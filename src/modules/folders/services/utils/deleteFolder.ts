@@ -1,4 +1,5 @@
 import { HttpException, HttpStatus } from '@nestjs/common';
+import { File } from 'src/models/file.model';
 import { Folder } from 'src/models/folder.model';
 
 export const deleteFolder = async (
@@ -14,6 +15,14 @@ export const deleteFolder = async (
         HttpStatus.NOT_FOUND,
       );
     }
+    const subfolders = await folderModel.findAll({
+      where: { inFolder: folderId },
+    });
+
+    for (const subfolder of subfolders) {
+      await deleteFolder(folderModel, subfolder.id);
+    }
+
     await folder.destroy();
 
     return { message: `Папка ${folderId} успешно удалена` };

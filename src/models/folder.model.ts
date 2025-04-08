@@ -1,4 +1,4 @@
-import { Column, DataType, Model, Table } from 'sequelize-typescript';
+import { Column, DataType, HasMany, Model, Table } from 'sequelize-typescript';
 import { InferAttributes, InferCreationAttributes } from 'sequelize';
 import {
   PRIVACY_VALUES,
@@ -6,6 +6,7 @@ import {
   SHARING_VALUES,
   SharingType,
 } from 'src/config/constants.config';
+import { File } from './file.model';
 
 @Table({ tableName: 'folders', timestamps: false })
 export class Folder extends Model<
@@ -39,4 +40,7 @@ export class Folder extends Model<
     defaultValue: SHARING_VALUES.READING,
   })
   declare sharingOptions?: SharingType;
+
+  @HasMany(() => File, { onDelete: 'CASCADE' })
+  files?: File[];
 }
