@@ -26,6 +26,7 @@ import { Status } from 'src/auth/decorators/status.decorator';
 import { StatusConfig } from 'src/config/status.config';
 import { SITE_CONTROLLER, SITE_ROUTES } from '../routes/site.routes';
 import { PARAMS_VALUES, QUERY_VALUES } from 'src/config/constants.config';
+import { EditFileDto } from '../dto/editFile.dto';
 
 @Controller(SITE_CONTROLLER.FILE)
 @UseGuards(AuthGuard, RolesGuard, StatusGuard)
@@ -110,7 +111,7 @@ export class FilesController {
   @UseGuards(EditFileGuard)
   async edit(
     @Param(PARAMS_VALUES.FILE_ID) fileId: string,
-    @Body() data,
+    @Body() data: EditFileDto,
     @Req() req: Request,
   ) {
     return this.filesService.edit(fileId, data, req);
