@@ -29,6 +29,7 @@ export const QUERY_VALUES = {
   ORDER: 'order',
   FILTER: 'filter',
   SEARCH: 'searchValue',
+  FILENAME: 'fileName',
   LOCATION: 'location',
 };
 

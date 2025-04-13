@@ -8,11 +8,6 @@ import cookieParser from 'cookie-parser';
 import { join } from 'path';
 import { existsSync, mkdirSync } from 'fs';
 
-const uploadDir = join(__dirname, '..', 'uploads');
-if (!existsSync(uploadDir)) {
-  mkdirSync(uploadDir, { recursive: true });
-}
-
 async function bootstrap() {
   await ConfigModule.forRoot();
 
