@@ -1,3 +1,4 @@
+import { Op } from 'sequelize';
 import { HttpException, HttpStatus } from '@nestjs/common';
 import { File } from 'src/models/file.model';
 
@@ -22,6 +23,34 @@ export const deleteFile = async (fileModel: typeof File, fileId: string) => {
     console.log('Ошибка при удалении файла', err);
     throw new HttpException(
       'Ошибка при удалении файла',
+      HttpStatus.INTERNAL_SERVER_ERROR,
+    );
+  }
+};
+
+export const deleteFiles = async (
+  fileModel: typeof File,
+  filesId: string[],
+) => {
+  try {
+    console.log(filesId);
+    if (!filesId || filesId.length === 0) {
+      throw new HttpException(`Отсутствует id файлов`, HttpStatus.BAD_REQUEST);
+    }
+
+    const deletedFiles = await fileModel.destroy({
+      where: {
+        id: {
+          [Op.in]: filesId,
+        },
+      },
+    });
+
+    return { message: `Файлов удалено: ${deletedFiles}` };
+  } catch (err) {
+    console.log('Ошибка при удалении файлов', err);
+    throw new HttpException(
+      'Ошибка при удалении файлов',
       HttpStatus.INTERNAL_SERVER_ERROR,
     );
   }

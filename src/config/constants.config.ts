@@ -21,6 +21,7 @@ export const SHARING_VALUES = {
 export const PARAMS_VALUES = {
   FOLDER_ID: 'folderId',
   FILE_ID: 'fileId',
+  FILES_ID: 'filesId',
   FILE_NAME: 'fileName',
   USER_ID: 'userId',
 };

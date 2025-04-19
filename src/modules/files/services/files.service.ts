@@ -6,7 +6,7 @@ import { Request } from 'express';
 import { findOneFile } from './utils/findOneFile';
 import { handleFileUpload } from './utils/fileUpload';
 import { editFile } from './utils/editFile';
-import { deleteFile } from './utils/deleteFile';
+import { deleteFile, deleteFiles } from './utils/deleteFile';
 import { getFileContent } from './utils/getFilePath';
 import { searchAllFiles } from './utils/searchAllFiles';
 import { Folder } from 'src/models/folder.model';
@@ -72,7 +72,11 @@ export class FilesService {
     return await editFile(this.fileModel, fileId, data);
   }
 
-  async delete(fileId: string, req: Request) {
+  async deleteOne(fileId: string, req: Request) {
     return await deleteFile(this.fileModel, fileId);
+  }
+
+  async deleteMultiple(filesId: string[], req: Request) {
+    return await deleteFiles(this.fileModel, filesId);
   }
 }

@@ -146,6 +146,6 @@ export class FilesController {
     @Param(PARAMS_VALUES.FILE_ID) fileId: string,
     @Req() req: Request,
   ) {
-    return this.filesService.delete(fileId, req);
+    return this.filesService.deleteOne(fileId, req);
   }
 }
