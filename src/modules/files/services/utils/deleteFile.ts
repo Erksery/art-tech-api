@@ -38,7 +38,7 @@ export const deleteFiles = async (
       throw new HttpException(`Отсутствует id файлов`, HttpStatus.BAD_REQUEST);
     }
 
-    const deletedFiles = await fileModel.destroy({
+    await fileModel.destroy({
       where: {
         id: {
           [Op.in]: filesId,
@@ -46,7 +46,7 @@ export const deleteFiles = async (
       },
     });
 
-    return { message: `Файлов удалено: ${deletedFiles}` };
+    return { message: `Выбранные файлы успешно удалены` };
   } catch (err) {
     console.log('Ошибка при удалении файлов', err);
     throw new HttpException(

@@ -1,3 +1,4 @@
+import { Type } from 'class-transformer';
 import {
   IsNotEmpty,
   IsOptional,
@@ -5,10 +6,11 @@ import {
   MaxLength,
   MinLength,
   IsEnum,
+  ValidateNested,
 } from 'class-validator';
 import { PRIVACY_VALUES, SHARING_VALUES } from 'src/config/constants.config';
 
-export class EditFolderDto {
+class EditDataDto {
   @IsOptional()
   @IsNotEmpty({ message: 'Название папки не может быть пустым' })
   @IsString({ message: 'Название папки должно быть строкой' })
@@ -36,4 +38,10 @@ export class EditFolderDto {
     message: 'Недопустимое значение для sharingOptions',
   })
   sharingOptions?: keyof typeof SHARING_VALUES;
+}
+
+export class EditFolderDto {
+  @ValidateNested()
+  @Type(() => EditDataDto)
+  editData: EditDataDto;
 }

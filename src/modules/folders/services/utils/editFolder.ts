@@ -15,7 +15,7 @@ export const editFolder = async (
         HttpStatus.NOT_FOUND,
       );
     }
-    await folder.update(data);
+    await folder.update(data.editData);
 
     return folder;
   } catch (err) {
