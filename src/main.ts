@@ -25,9 +25,10 @@ async function bootstrap() {
 
   app.enableCors({
     origin: [
-      'http://192.168.1.212:5173',
-      'http://192.168.0.4:5173',
+      'http://localhost:4173',
+      'http://localhost:5173',
       'http://192.168.0.3:5173',
+      'http://192.168.137.1:5173',
     ],
     credentials: true,
   });

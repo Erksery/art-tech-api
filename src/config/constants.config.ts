@@ -1,6 +1,7 @@
 export const PRIVACY_VALUES = {
   PRIVATE: 'Private',
   PUBLIC: 'Public',
+  LINK: 'Link',
 } as const;
 
 export const STATUS_VALUES = {

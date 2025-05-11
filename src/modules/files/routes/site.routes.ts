@@ -1,4 +1,8 @@
 export const SITE_CONTROLLER = { FILE: 'files', UPLOAD: 'upload' } as const;
+export const PUBLIC_SITE_CONTROLLER = {
+  FILE: 'public',
+  UPLOAD: 'upload',
+} as const;
 
 export const SITE_ROUTES = {
   FIND_ALL: 'folder/:folderId',

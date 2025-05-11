@@ -6,10 +6,11 @@ import { File } from 'src/models/file.model';
 import { AuthModule } from 'src/auth/auth.module';
 import { UploadController } from './controllers/upload.controller';
 import { Folder } from 'src/models/folder.model';
+import { PublicFilesController } from './controllers/public.files.controller';
 
 @Module({
   imports: [SequelizeModule.forFeature([File, Folder]), AuthModule],
   providers: [FilesService],
-  controllers: [FilesController, UploadController],
+  controllers: [FilesController, UploadController, PublicFilesController],
 })
 export class FilesModule {}
