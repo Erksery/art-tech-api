@@ -15,8 +15,6 @@ export const uploadFile = async (
   res,
 ) => {
   try {
-    const busboy = Busboy({ headers: req.headers });
-
     const uploadDir = join(process.cwd(), 'uploads');
     const compressDir = join(process.cwd(), 'compress');
 
@@ -27,55 +25,64 @@ export const uploadFile = async (
       mkdirSync(compressDir, { recursive: true });
     }
 
-    let fileSize = 0;
-    let savedFile: any;
-    let originalName = '';
-    let fileMimeType = '';
-    let fileEncoding = '';
-    let uniqueName = '';
-    let savePath = '';
+    await new Promise<void>((resolve, reject) => {
+      const busboy = Busboy({ headers: req.headers });
 
-    busboy.on('file', (fieldname, file, fileInfo) => {
-      originalName = Buffer.from(fileInfo.filename, 'latin1').toString('utf8');
-      fileMimeType = fileInfo.mimeType;
-      fileEncoding = fileInfo.encoding;
+      let fileSize = 0;
+      let savedFile: any;
+      let originalName = '';
+      let fileMimeType = '';
+      let fileEncoding = '';
+      let uniqueName = '';
+      let savePath = '';
 
-      uniqueName = `${Date.now()}-${Math.round(Math.random() * 1e9)}-${originalName}`;
-      savePath = join(uploadDir, uniqueName);
+      busboy.on('file', (fieldname, file, fileInfo) => {
+        originalName = Buffer.from(fileInfo.filename, 'latin1').toString(
+          'utf8',
+        );
+        fileMimeType = fileInfo.mimeType;
+        fileEncoding = fileInfo.encoding;
 
-      const writeStream = createWriteStream(savePath);
+        uniqueName = `${Date.now()}-${Math.round(Math.random() * 1e9)}-${originalName}`;
+        savePath = join(uploadDir, uniqueName);
 
-      file.on('data', (chunk) => {
-        fileSize += chunk.length;
-        console.log(`Загружено: ${fileSize} байт`);
-      });
+        const writeStream = createWriteStream(savePath);
 
-      file.on('end', () => {
-        console.log(`Файл ${originalName} успешно загружен.`);
-      });
-
-      file.on('error', (err) => {
-        console.error('Ошибка при записи файла:', err);
-        res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
-          message: 'Ошибка при записи файла',
+        file.on('data', (chunk) => {
+          fileSize += chunk.length;
         });
-      });
 
-      file.pipe(writeStream);
+        file.on('error', (err) => {
+          console.error('Ошибка чтения файла:', err);
+          reject(
+            new HttpException(
+              'Ошибка при чтении файла',
+              HttpStatus.BAD_REQUEST,
+            ),
+          );
+        });
 
-      writeStream.on('finish', async () => {
-        try {
-          if (fileMimeType.startsWith('image/')) {
-            const compressedPath = join(compressDir, `${uniqueName}.webp`);
-            const compressedImageBuffer = await sharp(savePath)
-              .resize({
-                width: 600,
-                withoutEnlargement: true,
-              })
-              .webp({ quality: 40 })
-              .toBuffer();
+        writeStream.on('error', (err) => {
+          console.error('Ошибка при записи файла:', err);
+          reject(
+            new HttpException(
+              'Ошибка при записи файла',
+              HttpStatus.INTERNAL_SERVER_ERROR,
+            ),
+          );
+        });
 
-            await writeFile(compressedPath, compressedImageBuffer);
+        writeStream.on('finish', async () => {
+          try {
+            if (fileMimeType.startsWith('image/')) {
+              const compressedPath = join(compressDir, `${uniqueName}.webp`);
+              const compressedImageBuffer = await sharp(savePath)
+                .resize({ width: 600, withoutEnlargement: true })
+                .webp({ quality: 40 })
+                .toBuffer();
+
+              await writeFile(compressedPath, compressedImageBuffer);
+            }
 
             savedFile = await handleFileUpload(
               fileModel,
@@ -89,26 +96,39 @@ export const uploadFile = async (
               },
               req.user,
             );
-          }
 
-          res.status(HttpStatus.CREATED).json({
-            message: 'Файл успешно загружен',
-            file: savedFile,
-          });
-        } catch (err) {
-          console.error('Ошибка при загрузке файла', err);
-          res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
-            message: 'Ошибка при загрузке файла',
-          });
-        }
+            res.status(HttpStatus.CREATED).json({
+              message: 'Файл успешно загружен',
+              file: savedFile,
+            });
+
+            resolve();
+          } catch (err) {
+            reject(err);
+          }
+        });
+
+        file.pipe(writeStream);
       });
+
+      busboy.on('error', (err) => {
+        console.error('Busboy error:', err);
+        reject(
+          new HttpException(
+            'Ошибка загрузки файла',
+            HttpStatus.INTERNAL_SERVER_ERROR,
+          ),
+        );
+      });
+
+      req.pipe(busboy);
     });
-    req.pipe(busboy);
   } catch (err) {
-    console.log('Ошибка при загрузке файла', err);
-    throw new HttpException(
-      'Ошибка при загрузке файла',
-      HttpStatus.INTERNAL_SERVER_ERROR,
-    );
+    console.error('Ошибка при загрузке файла', err);
+    if (!res.headersSent) {
+      res
+        .status(err?.status || HttpStatus.INTERNAL_SERVER_ERROR)
+        .json({ message: err.message || 'Ошибка при загрузке файла' });
+    }
   }
 };

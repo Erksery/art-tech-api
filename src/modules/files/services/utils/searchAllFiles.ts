@@ -34,7 +34,7 @@ export const searchAllFiles = async (
       }
 
       const isOwner = folder.creator === req.user.id;
-      const isPublic = folder.privacy === PRIVACY_VALUES.PUBLIC;
+      const isPublic = folder.privacy !== PRIVACY_VALUES.PRIVATE;
 
       if (!isPublic && !isOwner) {
         throw new HttpException(
@@ -70,10 +70,7 @@ export const searchAllFiles = async (
       return files;
     }
   } catch (err) {
-    console.log('Ошибка поиске файлов', err);
-    throw new HttpException(
-      'Ошибка поиске файлов',
-      HttpStatus.INTERNAL_SERVER_ERROR,
-    );
+    console.log('Ошибка при поиске файлов', err);
+    throw new HttpException(err, HttpStatus.INTERNAL_SERVER_ERROR);
   }
 };

@@ -5,7 +5,11 @@ import {
   Injectable,
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-import { PRIVACY_VALUES, SHARING_VALUES } from 'src/config/constants.config';
+import {
+  PRIVACY_VALUES,
+  ROLE_VALUES,
+  SHARING_VALUES,
+} from 'src/config/constants.config';
 import { Folder } from 'src/models/folder.model';
 
 @Injectable()
@@ -29,6 +33,9 @@ export class DeleteFileGuard implements CanActivate {
     }
 
     if (user.id === folder.creator) {
+      return true;
+    }
+    if (user.role === ROLE_VALUES.ADMIN) {
       return true;
     }
 

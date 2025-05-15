@@ -40,10 +40,7 @@ export class CreateFileGuard implements CanActivate {
       );
     }
 
-    if (
-      parentFolder.privacy === PRIVACY_VALUES.PUBLIC &&
-      parentFolder.sharingOptions === SHARING_VALUES.EDITING
-    ) {
+    if (parentFolder.sharingOptions === SHARING_VALUES.EDITING) {
       return true;
     }
 

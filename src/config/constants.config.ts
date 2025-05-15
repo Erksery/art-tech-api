@@ -7,6 +7,7 @@ export const PRIVACY_VALUES = {
 export const STATUS_VALUES = {
   APPROVED: 'approved',
   PENDING: 'pending',
+  REJECTED: 'rejected',
 } as const;
 
 export const ROLE_VALUES = {
@@ -44,3 +45,14 @@ export type PrivacyType = (typeof PRIVACY_VALUES)[keyof typeof PRIVACY_VALUES];
 export type StatusType = (typeof STATUS_VALUES)[keyof typeof STATUS_VALUES];
 export type RoleType = (typeof ROLE_VALUES)[keyof typeof ROLE_VALUES];
 export type SharingType = (typeof SHARING_VALUES)[keyof typeof SHARING_VALUES];
+
+export enum StatusEnum {
+  APPROVED = 'approved',
+  PENDING = 'pending',
+  REJECTED = 'rejected',
+}
+
+export enum OrderEnum {
+  ASC = 'asc',
+  DESC = 'desc',
+}

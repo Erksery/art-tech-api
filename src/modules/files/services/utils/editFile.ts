@@ -16,7 +16,7 @@ export const editFile = async (
       );
     }
 
-    const editFile = await file.update(data.editData);
+    await file.update(data.editData);
 
     return file;
   } catch (err) {

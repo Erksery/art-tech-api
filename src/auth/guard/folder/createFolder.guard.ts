@@ -4,7 +4,11 @@ import {
   ForbiddenException,
   Injectable,
 } from '@nestjs/common';
-import { PRIVACY_VALUES, SHARING_VALUES } from 'src/config/constants.config';
+import {
+  PRIVACY_VALUES,
+  ROLE_VALUES,
+  SHARING_VALUES,
+} from 'src/config/constants.config';
 import { Folder } from 'src/models/folder.model';
 
 @Injectable()
@@ -28,6 +32,10 @@ export class CreateFolderGuard implements CanActivate {
     }
 
     if (user.id === parentFolder.creator) {
+      return true;
+    }
+
+    if (user.role === ROLE_VALUES.ADMIN) {
       return true;
     }
 

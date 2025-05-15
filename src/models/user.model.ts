@@ -7,6 +7,7 @@ import {
 } from 'sequelize-typescript';
 import * as bcrypt from 'bcryptjs';
 import { InferAttributes, InferCreationAttributes } from 'sequelize';
+import { ROLE_VALUES, STATUS_VALUES } from 'src/config/constants.config';
 
 @Table({ tableName: 'users', timestamps: false })
 export class User extends Model<
@@ -26,15 +27,15 @@ export class User extends Model<
   declare password: string;
 
   @Column({
-    type: DataType.ENUM('User', 'Admin'),
-    defaultValue: 'User',
+    type: DataType.ENUM(...Object.values(ROLE_VALUES)),
+    defaultValue: ROLE_VALUES.USER,
     allowNull: false,
   })
   declare role: string;
 
   @Column({
-    type: DataType.ENUM('pending', 'approved', 'rejected'),
-    defaultValue: 'pending',
+    type: DataType.ENUM(...Object.values(STATUS_VALUES)),
+    defaultValue: STATUS_VALUES.PENDING,
     allowNull: false,
   })
   declare status: string;

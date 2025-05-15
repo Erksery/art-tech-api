@@ -1,3 +1,4 @@
+import { ROLE_VALUES } from 'src/config/constants.config';
 import {
   CanActivate,
   ExecutionContext,
@@ -24,6 +25,10 @@ export class DeleteFolderGuard implements CanActivate {
 
     if (!folder) {
       throw new ForbiddenException(`Папка ${folderId} не найдена`);
+    }
+
+    if (user.role === ROLE_VALUES.ADMIN) {
+      return true;
     }
 
     if (user.id !== folder.creator) {

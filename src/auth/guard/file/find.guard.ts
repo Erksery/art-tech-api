@@ -37,7 +37,10 @@ export class FindGuard implements CanActivate {
       );
     }
 
-    if (parentFolder.privacy === PRIVACY_VALUES.PUBLIC) {
+    if (
+      parentFolder.privacy === PRIVACY_VALUES.PUBLIC ||
+      parentFolder.privacy === PRIVACY_VALUES.LINK
+    ) {
       return true;
     }
 
