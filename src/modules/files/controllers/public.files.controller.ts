@@ -67,4 +67,13 @@ export class PublicFilesController {
     console.log(filePath);
     res.download(filePath);
   }
+
+  @Get(SITE_ROUTES.GET_VIDEO)
+  async getVideo(
+    @Param(PARAMS_VALUES.FILE_NAME) fileName: string,
+    @Req() req: Request,
+    @Res() res,
+  ) {
+    return this.filesService.getVideo(req, res, fileName);
+  }
 }

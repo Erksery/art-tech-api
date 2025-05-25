@@ -10,9 +10,11 @@ export const SITE_ROUTES = {
   FIND_ONE: 'folder/:folderId/file/:fileId',
   SEARCH_ALL_FILES: 'searchAllFiles/:folderId',
   GET_IMAGE: 'image/folder/:folderId/file/:fileName',
+  GET_VIDEO: 'video/folder/:folderId/file/:fileName',
   GET_COMPRESSED_IMAGE: 'compress_image/folder/:folderId/file/:fileName',
   EDIT: 'folder/:folderId/file/:fileId',
   DELETE: 'folder/:folderId/file/:fileId',
+  PASTE: 'folder/:folderId',
 
   UPLOAD: ':folderId',
 } as const;

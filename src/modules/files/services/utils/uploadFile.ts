@@ -6,7 +6,7 @@ import { HttpException, HttpStatus } from '@nestjs/common';
 import { createWriteStream, existsSync, mkdirSync } from 'fs';
 import { File } from 'src/models/file.model';
 import { writeFile } from 'fs/promises';
-import { handleFileUpload } from './fileUpload';
+import { createFile } from './createFile';
 
 export const uploadFile = async (
   fileModel: typeof File,
@@ -74,7 +74,10 @@ export const uploadFile = async (
 
         writeStream.on('finish', async () => {
           try {
-            if (fileMimeType.startsWith('image/')) {
+            if (
+              fileMimeType.startsWith('image/') &&
+              fileMimeType !== 'image/gif'
+            ) {
               const compressedPath = join(compressDir, `${uniqueName}.webp`);
               const compressedImageBuffer = await sharp(savePath)
                 .resize({ width: 600, withoutEnlargement: true })
@@ -84,7 +87,7 @@ export const uploadFile = async (
               await writeFile(compressedPath, compressedImageBuffer);
             }
 
-            savedFile = await handleFileUpload(
+            savedFile = await createFile(
               fileModel,
               folderId,
               uniqueName,

@@ -36,6 +36,10 @@ export const QUERY_VALUES = {
   LOCATION: 'location',
 };
 
+export const BODY_VALUES = {
+  FILES: 'files',
+};
+
 export const LOCATION_VALUER = {
   LOCAL: 'local',
   GLOBAL: 'global',

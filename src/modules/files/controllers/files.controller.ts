@@ -12,6 +12,7 @@ import {
   Res,
   NotFoundException,
   Query,
+  Post,
 } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { FilesService } from '../services/files.service';
@@ -25,9 +26,15 @@ import { Roles } from 'src/auth/decorators/roles.decorator';
 import { Status } from 'src/auth/decorators/status.decorator';
 import { StatusConfig } from 'src/config/status.config';
 import { SITE_CONTROLLER, SITE_ROUTES } from '../routes/site.routes';
-import { PARAMS_VALUES, QUERY_VALUES } from 'src/config/constants.config';
+import {
+  BODY_VALUES,
+  PARAMS_VALUES,
+  QUERY_VALUES,
+} from 'src/config/constants.config';
 import { EditFileDto } from '../dto/editFile.dto';
 import { join } from 'path';
+import { CreateFileGuard } from 'src/auth/guard/file/createFile.guard';
+import { PasteFileDto } from '../dto/pasteFile.dto';
 
 @Controller(SITE_CONTROLLER.FILE)
 @UseGuards(AuthGuard, RolesGuard, StatusGuard)
@@ -128,6 +135,16 @@ export class FilesController {
     res.download(filePath);
   }
 
+  @Get(SITE_ROUTES.GET_VIDEO)
+  @UseGuards(FindGuard)
+  async getVideo(
+    @Param(PARAMS_VALUES.FILE_NAME) fileName: string,
+    @Req() req: Request,
+    @Res() res,
+  ) {
+    return this.filesService.getVideo(req, res, fileName);
+  }
+
   @Patch(SITE_ROUTES.EDIT)
   @HttpCode(HttpStatus.OK)
   @UseGuards(EditFileGuard)
@@ -147,5 +164,15 @@ export class FilesController {
     @Req() req: Request,
   ) {
     return this.filesService.deleteOne(fileId, req);
+  }
+
+  @Post(SITE_ROUTES.PASTE)
+  @HttpCode(HttpStatus.OK)
+  @UseGuards(CreateFileGuard)
+  async paste(
+    @Param(PARAMS_VALUES.FOLDER_ID) folderId: string,
+    @Body() body: PasteFileDto,
+  ) {
+    return this.filesService.paste(body.files, folderId);
   }
 }

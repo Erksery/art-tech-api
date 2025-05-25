@@ -4,13 +4,15 @@ import { File } from 'src/models/file.model';
 import { findAllFiles } from './utils/findAllFiles';
 import { Request } from 'express';
 import { findOneFile } from './utils/findOneFile';
-import { handleFileUpload } from './utils/fileUpload';
+import { createFile } from './utils/createFile';
 import { editFile } from './utils/editFile';
 import { deleteFile, deleteFiles } from './utils/deleteFile';
 import { getFileContent } from './utils/getFilePath';
 import { searchAllFiles } from './utils/searchAllFiles';
 import { Folder } from 'src/models/folder.model';
 import { uploadFile } from './utils/uploadFile';
+import { findVideoFile } from './utils/findVideoFile';
+import { pasteFile } from './utils/copyFile';
 
 @Injectable()
 export class FilesService {
@@ -52,6 +54,10 @@ export class FilesService {
     return await getFileContent(this.fileModel, fileName);
   }
 
+  async getVideo(req, res, fileName: string) {
+    return await findVideoFile(req, res, fileName);
+  }
+
   async edit(fileId: string, data, req: Request) {
     return await editFile(this.fileModel, fileId, data);
   }
@@ -66,5 +72,9 @@ export class FilesService {
 
   async upload(folderId: string, req: Request, res: Response) {
     return await uploadFile(this.fileModel, folderId, req, res);
+  }
+
+  async paste(files: string[], folderId: string) {
+    return await pasteFile(this.fileModel, files, folderId);
   }
 }

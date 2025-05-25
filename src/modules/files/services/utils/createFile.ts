@@ -1,7 +1,7 @@
 import { HttpException, HttpStatus } from '@nestjs/common';
 import { File } from 'src/models/file.model';
 
-export const handleFileUpload = async (
+export const createFile = async (
   fileModel: typeof File,
   folderId: string,
   fileName: string,
