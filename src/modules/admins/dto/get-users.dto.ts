@@ -11,7 +11,7 @@ enum SortByEnum {
 
 export class FilterUsersDto {
   @IsOptional()
-  @IsEnum(OrderEnum)
+  @IsEnum(OrderEnum, { message: 'Недопустимое значение порядка' })
   order: OrderEnum;
 
   @IsOptional()

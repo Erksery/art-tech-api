@@ -21,9 +21,12 @@ export const findAllUsers = async (
     const limit = filters.limit ?? 10;
     const offset = filters.page ? (filters.page - 1) * limit : 0;
 
+    const sortBy = filters.sortBy || 'login';
+    const order = (filters.order || 'asc').toUpperCase();
+
     const users = await userModel.findAll({
       where,
-      order: [[filters.sortBy, filters.order.toUpperCase()]],
+      order: [[sortBy, order]],
       limit,
       offset,
     });

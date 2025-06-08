@@ -142,7 +142,8 @@ export class FilesController {
     @Req() req: Request,
     @Res() res,
   ) {
-    return this.filesService.getVideo(req, res, fileName);
+    const decodedName = decodeURIComponent(fileName);
+    return this.filesService.getVideo(req, res, decodedName);
   }
 
   @Patch(SITE_ROUTES.EDIT)
