@@ -143,6 +143,7 @@ export class FilesController {
     @Res() res,
   ) {
     const decodedName = decodeURIComponent(fileName);
+    console.log(decodedName);
     return this.filesService.getVideo(req, res, decodedName);
   }
 

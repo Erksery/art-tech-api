@@ -21,6 +21,8 @@ export class AuthGuard implements CanActivate {
       ? authHeader.split(' ')[1]
       : null;
 
+    console.log(authHeader, refreshToken);
+
     if (!accessToken) {
       throw new UnauthorizedException('Токен авторизации отсутствует');
     }
@@ -30,8 +32,7 @@ export class AuthGuard implements CanActivate {
       request.user = user;
       return true;
     } catch (error) {
-      console.warn('Access токен недействителен:', error.message);
-
+      console.warn('AUTH: Access токен недействителен:', error.message);
       if (refreshToken) {
         return await this.validateRefreshToken(refreshToken, request);
       }
