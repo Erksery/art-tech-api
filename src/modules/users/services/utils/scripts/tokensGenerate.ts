@@ -9,19 +9,18 @@ interface Tokens {
 export const tokensGenerate = (user: User, jwtService: JwtService): Tokens => {
   const payload = {
     id: user.id,
-    //login: user.login,
     role: user.role,
     status: user.status,
   };
 
   const accessToken = jwtService.sign(payload, {
     secret: process.env.JWT_ACCESS_SECRET,
-    expiresIn: '30m',
+    expiresIn: process.env.JWT_ACCESS_EXPIRES,
   });
 
   const refreshToken = jwtService.sign(payload, {
     secret: process.env.JWT_REFRESH_SECRET,
-    expiresIn: '30d',
+    expiresIn: process.env.JWT_REFRESH_EXPIRES,
   });
 
   return { accessToken, refreshToken };
