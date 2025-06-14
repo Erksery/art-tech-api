@@ -41,7 +41,6 @@ export class UserController {
     return this.userService.logout(refreshToken, res);
   }
   @Post(SITE_ROUTES.REFRESH)
-  //@UseGuards(AuthGuard)
   async refresh(@Req() req: Request, @Res() res: Response) {
     const refreshToken = req.headers['authorization']?.split(' ')[1];
     return this.userService.refresh(refreshToken, res);
@@ -52,7 +51,6 @@ export class UserController {
     return this.userService.getProfile(req);
   }
   @Get(SITE_ROUTES.USER)
-  @UseGuards(AuthGuard)
   async getUser(@Param(PARAMS_VALUES.USER_ID) userId: string) {
     console.log(userId);
     return this.userService.getUser(userId);

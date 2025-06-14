@@ -63,12 +63,6 @@ export class EditFolderGuard implements CanActivate {
       );
     }
 
-    if (
-      folder.privacy === PRIVACY_VALUES.PUBLIC &&
-      folder.sharingOptions === SHARING_VALUES.EDITING
-    ) {
-      return true;
-    }
 
     throw new ForbiddenException('Недостаточно прав для выполнения операции');
   }

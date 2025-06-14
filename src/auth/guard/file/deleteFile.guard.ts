@@ -25,7 +25,7 @@ export class DeleteFileGuard implements CanActivate {
 
     const folder = await Folder.findOne({
       where: { id: folderId },
-      attributes: ['creator'],
+      attributes: ['creator', 'privacy', 'sharingOptions'],
     });
 
     if (!folder) {
