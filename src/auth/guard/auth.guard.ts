@@ -3,63 +3,72 @@ import {
   CanActivate,
   ExecutionContext,
   ForbiddenException,
-  UnauthorizedException,
-} from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
-import { Token } from 'src/models/token.model';
+  UnauthorizedException
+} from '@nestjs/common'
+import { JwtService } from '@nestjs/jwt'
+import { Token } from 'src/models/token.model'
+import { User } from 'src/models/user.model'
 
 @Injectable()
 export class AuthGuard implements CanActivate {
   constructor(private jwtService: JwtService) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    const request = context.switchToHttp().getRequest();
+    const request = context.switchToHttp().getRequest()
 
-    const accessToken = request.cookies?.accessToken;
-    const authHeader = request.headers['authorization'];
+    const accessToken = request.cookies?.accessToken
+    const authHeader = request.headers['authorization']
     const refreshToken = authHeader?.startsWith('Bearer ')
       ? authHeader.split(' ')[1]
-      : null;
-
-    console.log(authHeader, refreshToken);
+      : null
 
     if (!accessToken) {
-      throw new UnauthorizedException('Токен авторизации отсутствует');
+      throw new UnauthorizedException('Токен авторизации отсутствует')
     }
 
     try {
-      const user = await this.jwtService.verifyAsync(accessToken);
-      request.user = user;
-      return true;
-    } catch (error) {
-      console.warn('AUTH: Access токен недействителен:', error.message);
-      if (refreshToken) {
-        return await this.validateRefreshToken(refreshToken, request);
+      const userToken = await this.jwtService.verifyAsync(accessToken)
+
+      if (userToken) {
+        const user = await User.findOne({
+          where: { id: userToken.id },
+          attributes: { exclude: ['password'] }
+        })
+        if (user) {
+          request.user = user
+        }
       }
 
-      throw new UnauthorizedException('Сессия истекла, авторизуйтесь заново');
+      return true
+    } catch (error) {
+      console.warn('Access токен недействителен:', error.message)
+      if (refreshToken) {
+        return await this.validateRefreshToken(refreshToken, request)
+      }
+
+      throw new UnauthorizedException('Сессия истекла, авторизуйтесь заново')
     }
   }
 
   private async validateRefreshToken(
     refreshToken: string,
-    request,
+    request
   ): Promise<boolean> {
     try {
       const tokenExists = await Token.findOne({
-        where: { token: refreshToken },
-      });
+        where: { token: refreshToken }
+      })
       if (!tokenExists) {
-        throw new ForbiddenException('Refresh токен недействителен');
+        throw new ForbiddenException('Refresh токен недействителен')
       }
 
-      const user = await this.jwtService.verifyAsync(refreshToken);
-      request.user = user;
+      const user = await this.jwtService.verifyAsync(refreshToken)
+      request.user = user
 
-      return true;
+      return true
     } catch (error) {
-      console.error('Ошибка валидации refresh токена:', error);
-      throw new UnauthorizedException('Требуется повторная авторизация');
+      console.error('Ошибка валидации refresh токена:', error)
+      throw new UnauthorizedException('Требуется повторная авторизация')
     }
   }
 }

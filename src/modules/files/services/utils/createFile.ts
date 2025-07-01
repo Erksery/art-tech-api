@@ -1,5 +1,5 @@
-import { HttpException, HttpStatus } from '@nestjs/common';
-import { File } from 'src/models/file.model';
+import { HttpException, HttpStatus } from '@nestjs/common'
+import { File } from 'src/models/file.model'
 
 export const createFile = async (
   fileModel: typeof File,
@@ -7,15 +7,15 @@ export const createFile = async (
   fileName: string,
   originalName: string,
   file,
-  user,
+  user
 ) => {
   try {
     if (!folderId) {
-      throw new HttpException(`Отсутствует id папки`, HttpStatus.NOT_FOUND);
+      throw new HttpException(`Отсутствует id папки`, HttpStatus.NOT_FOUND)
     }
 
     if (!file) {
-      throw new HttpException('Файл отсутствует', HttpStatus.BAD_REQUEST);
+      throw new HttpException('Файл отсутствует', HttpStatus.BAD_REQUEST)
     }
     const createdFile = await fileModel.create({
       name: fileName,
@@ -23,16 +23,16 @@ export const createFile = async (
       creator: user.id,
       mimeType: file.mimetype,
       size: file.size,
-      folderId: folderId,
-    });
+      folderId: folderId
+    })
 
-    return createdFile;
+    return createdFile
   } catch (err) {
-    console.error('Ошибка при создании файла', err);
+    console.error('Ошибка при создании файла', err)
 
     throw new HttpException(
       'Ошибка при создании файла',
-      HttpStatus.INTERNAL_SERVER_ERROR,
-    );
+      HttpStatus.INTERNAL_SERVER_ERROR
+    )
   }
-};
+}

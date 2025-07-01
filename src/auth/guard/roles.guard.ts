@@ -2,9 +2,9 @@ import {
   Injectable,
   CanActivate,
   ExecutionContext,
-  ForbiddenException,
-} from '@nestjs/common';
-import { Reflector } from '@nestjs/core';
+  ForbiddenException
+} from '@nestjs/common'
+import { Reflector } from '@nestjs/core'
 
 @Injectable()
 export class RolesGuard implements CanActivate {
@@ -14,23 +14,23 @@ export class RolesGuard implements CanActivate {
     const requiredRoles =
       this.reflector.get<string[]>('roles', context.getHandler()) ??
       this.reflector.get<string[]>('roles', context.getClass()) ??
-      [];
+      []
 
     if (!requiredRoles.length) {
-      return true;
+      return true
     }
 
-    const request = context.switchToHttp().getRequest();
-    const user = request.user;
+    const request = context.switchToHttp().getRequest()
+    const user = request.user
 
     if (!user || !user.role) {
-      throw new ForbiddenException('Роль пользователя не определена');
+      throw new ForbiddenException('Роль пользователя не определена')
     }
 
     if (!requiredRoles.includes(user.role)) {
-      throw new ForbiddenException('Доступ запрещен: недостаточно прав');
+      throw new ForbiddenException('Доступ запрещен: недостаточно прав')
     }
 
-    return true;
+    return true
   }
 }

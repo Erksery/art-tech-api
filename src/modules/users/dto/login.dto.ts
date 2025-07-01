@@ -1,34 +1,34 @@
-import { Exclude, Expose } from 'class-transformer';
-import { IsString, MinLength } from 'class-validator';
+import { Exclude, Expose } from 'class-transformer'
+import { IsString, MinLength } from 'class-validator'
 
 export class LoginDto {
   @IsString()
-  login: string;
+  login: string
 
   @IsString()
   @MinLength(6)
-  password: string;
+  password: string
 }
 
 export class LoginResponseDto {
   @Expose()
-  id: number;
+  id: number
 
   @Expose()
-  login: string;
+  login: string
 
   @Expose()
-  status: string;
+  status: string
 
   @Expose()
-  role: string;
+  role: string
 
   @Exclude()
-  password?: string;
+  password?: string
 
   @Exclude()
-  refreshToken?: string;
+  refreshToken?: string
 
   @Expose()
-  avatar_url?: string;
+  avatar_url?: string
 }

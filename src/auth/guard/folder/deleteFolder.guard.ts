@@ -1,40 +1,40 @@
-import { ROLE_VALUES } from 'src/config/constants.config';
+import { ROLE_VALUES } from 'src/config/constants.config'
 import {
   CanActivate,
   ExecutionContext,
   ForbiddenException,
-  Injectable,
-} from '@nestjs/common';
-import { Folder } from 'src/models/folder.model';
+  Injectable
+} from '@nestjs/common'
+import { Folder } from 'src/models/folder.model'
 
 @Injectable()
 export class DeleteFolderGuard implements CanActivate {
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    const request = context.switchToHttp().getRequest();
-    const user = request.user;
-    const folderId = request.params.folderId;
+    const request = context.switchToHttp().getRequest()
+    const user = request.user
+    const folderId = request.params.folderId
 
     if (!folderId) {
-      throw new ForbiddenException(`Отсутствует идентификатор папки`);
+      throw new ForbiddenException(`Отсутствует идентификатор папки`)
     }
 
     const folder = await Folder.findOne({
       where: { id: folderId },
-      attributes: ['creator'],
-    });
+      attributes: ['creator']
+    })
 
     if (!folder) {
-      throw new ForbiddenException(`Папка ${folderId} не найдена`);
+      throw new ForbiddenException(`Папка ${folderId} не найдена`)
     }
 
     if (user.role === ROLE_VALUES.ADMIN) {
-      return true;
+      return true
     }
 
     if (user.id !== folder.creator) {
-      throw new ForbiddenException('Удалять папку может только ее создатель');
+      throw new ForbiddenException('Удалять папку может только ее создатель')
     }
 
-    return true;
+    return true
   }
 }

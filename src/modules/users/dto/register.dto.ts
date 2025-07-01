@@ -1,35 +1,35 @@
-import { IsString, Length } from 'class-validator';
-import { Exclude, Expose } from 'class-transformer';
+import { IsString, Length } from 'class-validator'
+import { Exclude, Expose } from 'class-transformer'
 
 export class RegisterDto {
   @IsString()
   @Length(3, 12)
-  login: string;
+  login: string
 
   @IsString()
   @Length(6, 24)
-  password: string;
+  password: string
 }
 
 export class RegisterResponseDto {
   @Expose()
-  id: number;
+  id: number
 
   @Expose()
-  login: string;
+  login: string
 
   @Expose()
-  status: string;
+  status: string
 
   @Expose()
-  role: string;
+  role: string
 
   @Exclude()
-  password?: string;
+  password?: string
 
   @Exclude()
-  refreshToken?: string;
+  refreshToken?: string
 
   @Expose()
-  avatar_url?: string;
+  avatar_url?: string
 }

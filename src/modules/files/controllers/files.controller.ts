@@ -12,29 +12,31 @@ import {
   Res,
   NotFoundException,
   Query,
-  Post,
-} from '@nestjs/common';
-import { Request, Response } from 'express';
-import { FilesService } from '../services/files.service';
-import { AuthGuard } from 'src/auth/guard/auth.guard';
-import { RolesGuard } from 'src/auth/guard/roles.guard';
-import { FindGuard } from 'src/auth/guard/file/find.guard';
-import { EditFileGuard } from 'src/auth/guard/file/editFile.guard';
-import { DeleteFileGuard } from 'src/auth/guard/file/deleteFile.guard';
-import { StatusGuard } from 'src/auth/guard/status.guard';
-import { Roles } from 'src/auth/decorators/roles.decorator';
-import { Status } from 'src/auth/decorators/status.decorator';
-import { StatusConfig } from 'src/config/status.config';
-import { SITE_CONTROLLER, SITE_ROUTES } from '../routes/site.routes';
+  Post
+} from '@nestjs/common'
+import { Request, Response } from 'express'
+import { FilesService } from '../services/files.service'
+import { AuthGuard } from 'src/auth/guard/auth.guard'
+import { RolesGuard } from 'src/auth/guard/roles.guard'
+import { FindGuard } from 'src/auth/guard/file/find.guard'
+import { EditFileGuard } from 'src/auth/guard/file/editFile.guard'
+import { DeleteFileGuard } from 'src/auth/guard/file/deleteFile.guard'
+import { StatusGuard } from 'src/auth/guard/status.guard'
+import { Roles } from 'src/auth/decorators/roles.decorator'
+import { Status } from 'src/auth/decorators/status.decorator'
+import { StatusConfig } from 'src/config/status.config'
+import { SITE_CONTROLLER, SITE_ROUTES } from '../routes/site.routes'
 import {
-  BODY_VALUES,
+  COMPRESSED_FOLDER,
   PARAMS_VALUES,
   QUERY_VALUES,
-} from 'src/config/constants.config';
-import { EditFileDto } from '../dto/editFile.dto';
-import { join } from 'path';
-import { CreateFileGuard } from 'src/auth/guard/file/createFile.guard';
-import { PasteFileDto } from '../dto/pasteFile.dto';
+  UPLOAD_FOLDER
+} from 'src/config/constants.config'
+import { EditFileDto } from '../dto/editFile.dto'
+import { join } from 'path'
+import { CreateFileGuard } from 'src/auth/guard/file/createFile.guard'
+import { PasteFileDto } from '../dto/pasteFile.dto'
+import { DeleteDataDto } from '../dto/delete.dto'
 
 @Controller(SITE_CONTROLLER.FILE)
 @UseGuards(AuthGuard, RolesGuard, StatusGuard)
@@ -49,9 +51,9 @@ export class FilesController {
     @Param(PARAMS_VALUES.FOLDER_ID) folderId: string,
     @Query(QUERY_VALUES.ORDER) order?: string,
     @Query(QUERY_VALUES.FILTER) filter?: string,
-    @Query(QUERY_VALUES.SEARCH) search?: string,
+    @Query(QUERY_VALUES.SEARCH) search?: string
   ) {
-    return this.filesService.findAll(folderId, order, filter, search);
+    return this.filesService.findAll(folderId, order, filter, search)
   }
 
   @Get(SITE_ROUTES.SEARCH_ALL_FILES)
@@ -60,20 +62,20 @@ export class FilesController {
     @Req() req: Request,
     @Param(PARAMS_VALUES.FOLDER_ID) folderId: string,
     @Query(QUERY_VALUES.SEARCH) searchValue: string,
-    @Query(QUERY_VALUES.LOCATION) location: string,
+    @Query(QUERY_VALUES.LOCATION) location: string
   ) {
     return this.filesService.searchAllFiles(
       folderId,
       searchValue,
       location,
-      req,
-    );
+      req
+    )
   }
 
   @Get(SITE_ROUTES.FIND_ONE)
   @UseGuards(FindGuard)
   async findOne(@Param(PARAMS_VALUES.FILE_ID) fileId: string) {
-    return this.filesService.findOne(fileId);
+    return this.filesService.findOne(fileId)
   }
 
   @Get(SITE_ROUTES.GET_IMAGE)
@@ -81,43 +83,47 @@ export class FilesController {
   async getImage(
     @Param(PARAMS_VALUES.FILE_NAME) fileName: string,
     @Req() req: Request,
-    @Res() res: Response,
+    @Res() res: Response
   ) {
-    const filePath = await this.filesService.getFilePath(fileName, req);
+    const filePath = await this.filesService.getFilePath(fileName, req)
 
     if (!filePath) {
-      throw new NotFoundException('Файл не найден');
+      throw new NotFoundException('Файл не найден')
     }
-    res.sendFile(filePath, (err) => {
+    res.sendFile(filePath, err => {
       if (err) {
-        console.error('Ошибка при отправке файла:', err);
+        console.error('Ошибка при отправке файла:', err)
         if (!res.headersSent) {
-          res.status(500).send('Ошибка при отправке файла');
+          res.status(500).send('Ошибка при отправке файла')
         }
       }
-    });
+    })
   }
 
   @Get(SITE_ROUTES.GET_COMPRESSED_IMAGE)
   @UseGuards(FindGuard)
   async getCompressedImage(
     @Param(PARAMS_VALUES.FILE_NAME) fileName: string,
-    @Req() req: Request,
-    @Res() res: Response,
+    @Res() res: Response
   ) {
-    const compressDir = join(process.cwd(), 'compress', fileName);
+    const compressDir = join(
+      process.cwd(),
+      UPLOAD_FOLDER,
+      COMPRESSED_FOLDER,
+      fileName
+    )
 
     if (!compressDir) {
-      throw new NotFoundException('Файл не найден');
+      throw new NotFoundException('Файл не найден')
     }
-    res.sendFile(compressDir, (err) => {
+    res.sendFile(compressDir, err => {
       if (err) {
-        console.error('Ошибка при отправке файла:', err);
+        console.error('Ошибка при отправке файла:', err)
         if (!res.headersSent) {
-          res.status(500).send('Ошибка при отправке файла');
+          res.status(500).send('Ошибка при отправке файла')
         }
       }
-    });
+    })
   }
 
   @Get(SITE_ROUTES.DOWNLOAD)
@@ -125,14 +131,9 @@ export class FilesController {
   async downloadFile(
     @Res() res: Response,
     @Query(QUERY_VALUES.FILENAME) fileName: string,
+    @Query(QUERY_VALUES.FILETYPE) fileType: string
   ) {
-    const filePath = join(process.cwd(), 'uploads', fileName);
-
-    if (!filePath) {
-      throw new NotFoundException('Файл не найден');
-    }
-    console.log(filePath);
-    res.download(filePath);
+    return this.filesService.download(res, fileName, fileType)
   }
 
   @Get(SITE_ROUTES.GET_VIDEO)
@@ -140,11 +141,10 @@ export class FilesController {
   async getVideo(
     @Param(PARAMS_VALUES.FILE_NAME) fileName: string,
     @Req() req: Request,
-    @Res() res,
+    @Res() res
   ) {
-    const decodedName = decodeURIComponent(fileName);
-    console.log(decodedName);
-    return this.filesService.getVideo(req, res, decodedName);
+    const decodedName = decodeURIComponent(fileName)
+    return this.filesService.getVideo(req, res, decodedName)
   }
 
   @Patch(SITE_ROUTES.EDIT)
@@ -153,19 +153,16 @@ export class FilesController {
   async edit(
     @Param(PARAMS_VALUES.FILE_ID) fileId: string,
     @Body() data: EditFileDto,
-    @Req() req: Request,
+    @Req() req: Request
   ) {
-    return this.filesService.edit(fileId, data, req);
+    return this.filesService.edit(fileId, data, req)
   }
 
   @Delete(SITE_ROUTES.DELETE)
   @HttpCode(HttpStatus.OK)
   @UseGuards(DeleteFileGuard)
-  async delete(
-    @Param(PARAMS_VALUES.FILE_ID) fileId: string,
-    @Req() req: Request,
-  ) {
-    return this.filesService.deleteOne(fileId, req);
+  async delete(@Body() data: DeleteDataDto, @Req() req: Request) {
+    return this.filesService.deleteMultiple(data.filesId, req)
   }
 
   @Post(SITE_ROUTES.PASTE)
@@ -173,8 +170,8 @@ export class FilesController {
   @UseGuards(CreateFileGuard)
   async paste(
     @Param(PARAMS_VALUES.FOLDER_ID) folderId: string,
-    @Body() body: PasteFileDto,
+    @Body() body: PasteFileDto
   ) {
-    return this.filesService.paste(body.files, folderId);
+    return this.filesService.paste(body.files, folderId)
   }
 }

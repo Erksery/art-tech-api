@@ -1,4 +1,3 @@
-import { SetMetadata } from '@nestjs/common';
+import { SetMetadata } from '@nestjs/common'
 
-export const Status = (...statuses: string[]) =>
-  SetMetadata('status', statuses);
+export const Status = (...statuses: string[]) => SetMetadata('status', statuses)

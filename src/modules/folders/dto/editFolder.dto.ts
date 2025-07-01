@@ -1,4 +1,4 @@
-import { Type } from 'class-transformer';
+import { Type } from 'class-transformer'
 import {
   IsNotEmpty,
   IsOptional,
@@ -6,42 +6,42 @@ import {
   MaxLength,
   MinLength,
   IsEnum,
-  ValidateNested,
-} from 'class-validator';
-import { PRIVACY_VALUES, SHARING_VALUES } from 'src/config/constants.config';
+  ValidateNested
+} from 'class-validator'
+import { PRIVACY_VALUES, SHARING_VALUES } from 'src/config/constants.config'
 
 class EditDataDto {
   @IsOptional()
   @IsNotEmpty({ message: 'Название папки не может быть пустым' })
   @IsString({ message: 'Название папки должно быть строкой' })
   @MinLength(5, {
-    message: 'Название папки должно содержать минимум 5 символов',
+    message: 'Название папки должно содержать минимум 5 символов'
   })
   @MaxLength(20, {
-    message: 'Название папки должно содержать максимум 20 символов',
+    message: 'Название папки должно содержать максимум 20 символов'
   })
-  name?: string;
+  name?: string
 
   @IsOptional()
   @IsString({ message: 'Описание папки должно быть строкой' })
   @MaxLength(100, {
-    message: 'Описание папки должно содержать максимум 100 символов',
+    message: 'Описание папки должно содержать максимум 100 символов'
   })
-  description?: string;
+  description?: string
 
   @IsOptional()
   @IsEnum(PRIVACY_VALUES, { message: 'Недопустимое значение для privacy' })
-  privacy?: keyof typeof PRIVACY_VALUES;
+  privacy?: keyof typeof PRIVACY_VALUES
 
   @IsOptional()
   @IsEnum(SHARING_VALUES, {
-    message: 'Недопустимое значение для sharingOptions',
+    message: 'Недопустимое значение для sharingOptions'
   })
-  sharingOptions?: keyof typeof SHARING_VALUES;
+  sharingOptions?: keyof typeof SHARING_VALUES
 }
 
 export class EditFolderDto {
   @ValidateNested()
   @Type(() => EditDataDto)
-  editData: EditDataDto;
+  editData: EditDataDto
 }

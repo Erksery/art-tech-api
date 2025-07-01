@@ -1,46 +1,47 @@
-import { Op } from 'sequelize';
-import { User } from 'src/models/user.model';
-import { ConflictException, HttpException, HttpStatus } from '@nestjs/common';
-import { FilterUsersDto } from '../../dto/get-users.dto';
+import { ConflictException, HttpException, HttpStatus } from '@nestjs/common'
+import { Op } from 'sequelize'
+import { User } from 'src/models/user.model'
+
+import { FilterUsersDto } from '../../dto/get-users.dto'
 
 export const findAllUsers = async (
   userModel: typeof User,
-  filters: FilterUsersDto,
+  filters: FilterUsersDto
 ) => {
   try {
-    const where: any = {};
+    const where: any = {}
 
     if (filters.status) {
-      where.status = { [Op.iLike]: `%${filters.status}%` };
+      where.status = { [Op.iLike]: `%${filters.status}%` }
     }
 
     if (filters.search) {
-      where.login = { [Op.iLike]: `%${filters.search}%` };
+      where.login = { [Op.iLike]: `%${filters.search}%` }
     }
 
-    const limit = filters.limit ?? 10;
-    const offset = filters.page ? (filters.page - 1) * limit : 0;
+    const limit = filters.limit ?? 10
+    const offset = filters.page ? (filters.page - 1) * limit : 0
 
-    const sortBy = filters.sortBy || 'login';
-    const order = (filters.order || 'asc').toUpperCase();
+    const sortBy = filters.sortBy || 'login'
+    const order = (filters.order || 'asc').toUpperCase()
 
     const users = await userModel.findAll({
       where,
       order: [[sortBy, order]],
       limit,
-      offset,
-    });
+      offset
+    })
 
-    return users;
+    return users
   } catch (err) {
     if (err instanceof ConflictException) {
-      throw err;
+      throw err
     }
 
-    console.error('Ошибка при получении пользователей', err);
+    console.error('Ошибка при получении пользователей', err)
     throw new HttpException(
       'Ошибка при получении пользователей',
-      HttpStatus.INTERNAL_SERVER_ERROR,
-    );
+      HttpStatus.INTERNAL_SERVER_ERROR
+    )
   }
-};
+}

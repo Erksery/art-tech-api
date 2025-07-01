@@ -1,4 +1,4 @@
-export const SITE_CONTROLLER = { AUTH: 'auth' } as const;
+export const SITE_CONTROLLER = { AUTH: 'auth' } as const
 
 export const SITE_ROUTES = {
   REG: 'register',
@@ -6,5 +6,5 @@ export const SITE_ROUTES = {
   LOGOUT: 'logout',
   REFRESH: 'refresh',
   PROFILE: 'profile',
-  USER: ':userId',
-} as const;
+  USER: ':userId'
+} as const

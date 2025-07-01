@@ -1,24 +1,24 @@
-import { ConflictException, HttpException, HttpStatus } from '@nestjs/common';
-import { File } from 'src/models/file.model';
+import { ConflictException, HttpException, HttpStatus } from '@nestjs/common'
+import { File } from 'src/models/file.model'
 
 export const pasteFile = async (
   fileModel: typeof File,
   files: string[],
-  folderId: string,
+  folderId: string
 ) => {
   try {
-    console.log(folderId, files, typeof files);
+    console.log(folderId, files, typeof files)
     if (!folderId) {
-      throw new HttpException(`Отсутствует id папки`, HttpStatus.NOT_FOUND);
+      throw new HttpException(`Отсутствует id папки`, HttpStatus.NOT_FOUND)
     }
 
-    const copiedFiles: File[] = [];
+    const copiedFiles: File[] = []
 
     for (const fileId of files) {
-      const file = await fileModel.findByPk(fileId);
+      const file = await fileModel.findByPk(fileId)
       if (!file) {
-        console.warn(`Файл с id ${fileId} не найден, пропускаем`);
-        continue;
+        console.warn(`Файл с id ${fileId} не найден, пропускаем`)
+        continue
       }
 
       const copiedFile = await fileModel.create({
@@ -27,22 +27,22 @@ export const pasteFile = async (
         creator: file.creator,
         mimeType: file.mimeType,
         size: file.size,
-        folderId: folderId,
-      });
+        folderId: folderId
+      })
 
-      copiedFiles.push(copiedFile);
+      copiedFiles.push(copiedFile)
     }
 
-    return copiedFiles;
+    return copiedFiles
   } catch (err) {
     if (err instanceof ConflictException) {
-      throw err;
+      throw err
     }
 
-    console.error('Ошибка при вставке файлов', err);
+    console.error('Ошибка при вставке файлов', err)
     throw new HttpException(
       'Ошибка при вставке файлов',
-      HttpStatus.INTERNAL_SERVER_ERROR,
-    );
+      HttpStatus.INTERNAL_SERVER_ERROR
+    )
   }
-};
+}

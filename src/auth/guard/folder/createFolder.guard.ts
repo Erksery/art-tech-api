@@ -2,56 +2,56 @@ import {
   CanActivate,
   ExecutionContext,
   ForbiddenException,
-  Injectable,
-} from '@nestjs/common';
+  Injectable
+} from '@nestjs/common'
 import {
   PRIVACY_VALUES,
   ROLE_VALUES,
-  SHARING_VALUES,
-} from 'src/config/constants.config';
-import { Folder } from 'src/models/folder.model';
+  SHARING_VALUES
+} from 'src/config/constants.config'
+import { Folder } from 'src/models/folder.model'
 
 @Injectable()
 export class CreateFolderGuard implements CanActivate {
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    const request = context.switchToHttp().getRequest();
-    const user = request.user;
-    const folderId = request.body.folderId;
+    const request = context.switchToHttp().getRequest()
+    const user = request.user
+    const folderId = request.body.folderId
 
     if (!folderId) {
-      return true;
+      return true
     }
 
     const parentFolder = await Folder.findOne({
       where: { id: folderId },
-      attributes: ['privacy', 'creator', 'sharingOptions'],
-    });
+      attributes: ['privacy', 'creator', 'sharingOptions']
+    })
 
     if (!parentFolder) {
-      throw new ForbiddenException('Родительская папка не найдена');
+      throw new ForbiddenException('Родительская папка не найдена')
     }
 
     if (user.id === parentFolder.creator) {
-      return true;
+      return true
     }
 
     if (user.role === ROLE_VALUES.ADMIN) {
-      return true;
+      return true
     }
 
     if (parentFolder.privacy === PRIVACY_VALUES.PRIVATE) {
       throw new ForbiddenException(
-        'Доступ к этой папке запрещен сторонним лицам',
-      );
+        'Доступ к этой папке запрещен сторонним лицам'
+      )
     }
 
     if (
       parentFolder.privacy === PRIVACY_VALUES.PUBLIC &&
       parentFolder.sharingOptions === SHARING_VALUES.EDITING
     ) {
-      return true;
+      return true
     }
 
-    throw new ForbiddenException('Недостаточно прав для выполнения операции');
+    throw new ForbiddenException('Недостаточно прав для выполнения операции')
   }
 }

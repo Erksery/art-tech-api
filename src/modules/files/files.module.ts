@@ -1,16 +1,16 @@
-import { Module } from '@nestjs/common';
-import { SequelizeModule } from '@nestjs/sequelize';
-import { FilesController } from './controllers/files.controller';
-import { FilesService } from './services/files.service';
-import { File } from 'src/models/file.model';
-import { AuthModule } from 'src/auth/auth.module';
-import { UploadController } from './controllers/upload.controller';
-import { Folder } from 'src/models/folder.model';
-import { PublicFilesController } from './controllers/public.files.controller';
+import { Module } from '@nestjs/common'
+import { SequelizeModule } from '@nestjs/sequelize'
+import { FilesController } from './controllers/files.controller'
+import { FilesService } from './services/files.service'
+import { File } from 'src/models/file.model'
+import { AuthModule } from 'src/auth/auth.module'
+import { UploadController } from './controllers/upload.controller'
+import { Folder } from 'src/models/folder.model'
+import { PublicFilesController } from './controllers/public.files.controller'
 
 @Module({
   imports: [SequelizeModule.forFeature([File, Folder]), AuthModule],
   providers: [FilesService],
-  controllers: [FilesController, UploadController, PublicFilesController],
+  controllers: [FilesController, UploadController, PublicFilesController]
 })
 export class FilesModule {}

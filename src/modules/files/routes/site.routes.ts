@@ -1,8 +1,8 @@
-export const SITE_CONTROLLER = { FILE: 'files', UPLOAD: 'upload' } as const;
+export const SITE_CONTROLLER = { FILE: 'files', UPLOAD: 'upload' } as const
 export const PUBLIC_SITE_CONTROLLER = {
   FILE: 'public',
-  UPLOAD: 'upload',
-} as const;
+  UPLOAD: 'upload'
+} as const
 
 export const SITE_ROUTES = {
   FIND_ALL: 'folder/:folderId',
@@ -13,8 +13,8 @@ export const SITE_ROUTES = {
   GET_VIDEO: 'video/folder/:folderId/file/:fileName',
   GET_COMPRESSED_IMAGE: 'compress_image/folder/:folderId/file/:fileName',
   EDIT: 'folder/:folderId/file/:fileId',
-  DELETE: 'folder/:folderId/file/:fileId',
+  DELETE: 'folder/:folderId',
   PASTE: 'folder/:folderId',
 
-  UPLOAD: ':folderId',
-} as const;
+  UPLOAD: ':folderId'
+} as const

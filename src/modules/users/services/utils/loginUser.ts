@@ -1,57 +1,58 @@
+import { Response } from 'express'
 import {
   HttpException,
   HttpStatus,
-  UnauthorizedException,
-} from '@nestjs/common';
-import { User } from 'src/models/user.model';
-import { LoginDto, LoginResponseDto } from 'src/modules/users/dto/login.dto';
-import * as bcrypt from 'bcryptjs';
-import { tokensGenerate } from './scripts/tokensGenerate';
-import { plainToInstance } from 'class-transformer';
-import { Token } from 'src/models/token.model';
-import { Response } from 'express';
+  UnauthorizedException
+} from '@nestjs/common'
+import * as bcrypt from 'bcryptjs'
+import { plainToInstance } from 'class-transformer'
+import { Token } from 'src/models/token.model'
+import { User } from 'src/models/user.model'
+import { LoginDto, LoginResponseDto } from 'src/modules/users/dto/login.dto'
+
+import { tokensGenerate } from './scripts/tokensGenerate'
 
 export const loginUser = async (
   dto: LoginDto,
   userModel: typeof User,
   tokenModel: typeof Token,
-  jwtService,
+  jwtService
 ) => {
   try {
-    const user = await userModel.findOne({ where: { login: dto.login } });
+    const user = await userModel.findOne({ where: { login: dto.login } })
 
     if (!user) {
-      throw new UnauthorizedException('Пользователь с таким именем не найден');
+      throw new UnauthorizedException('Пользователь с таким именем не найден')
     }
-    const isPasswordValid = await bcrypt.compare(dto.password, user.password);
+    const isPasswordValid = await bcrypt.compare(dto.password, user.password)
     if (!isPasswordValid) {
-      throw new UnauthorizedException('Неверный пароль');
+      throw new UnauthorizedException('Неверный пароль')
     }
-    const { accessToken, refreshToken } = tokensGenerate(user, jwtService);
+    const { accessToken, refreshToken } = tokensGenerate(user, jwtService)
 
     const existingToken = await tokenModel.findOne({
-      where: { userId: user.id },
-    });
+      where: { userId: user.id }
+    })
 
     if (existingToken) {
-      await existingToken.update({ token: refreshToken });
+      await existingToken.update({ token: refreshToken })
     } else {
-      await tokenModel.create({ userId: user.id, token: refreshToken });
+      await tokenModel.create({ userId: user.id, token: refreshToken })
     }
 
     const userResponse = plainToInstance(LoginResponseDto, user, {
-      excludeExtraneousValues: true,
-    });
+      excludeExtraneousValues: true
+    })
 
-    return { user: userResponse, accessToken, refreshToken };
+    return { user: userResponse, accessToken, refreshToken }
   } catch (err) {
     if (err instanceof UnauthorizedException) {
-      throw err;
+      throw err
     }
-    console.error('Ошибка при авторизации пользователя', err);
+    console.error('Ошибка при авторизации пользователя', err)
     throw new HttpException(
       'Ошибка при авторизации пользователя',
-      HttpStatus.INTERNAL_SERVER_ERROR,
-    );
+      HttpStatus.INTERNAL_SERVER_ERROR
+    )
   }
-};
+}

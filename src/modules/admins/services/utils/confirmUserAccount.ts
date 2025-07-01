@@ -1,37 +1,38 @@
+import { ConflictException, HttpException, HttpStatus } from '@nestjs/common'
+import { User } from 'src/models/user.model'
+
 import {
   STATUS_VALUES,
-  StatusType,
-} from './../../../../config/constants.config';
-import { ConflictException, HttpException, HttpStatus } from '@nestjs/common';
-import { User } from 'src/models/user.model';
+  StatusType
+} from './../../../../config/constants.config'
 
 export const confirmUserAccount = async (
   userModel: typeof User,
   userId: string,
-  status: StatusType,
+  status: StatusType
 ) => {
   try {
-    const user = await userModel.findByPk(userId);
+    const user = await userModel.findByPk(userId)
 
     if (!user) {
       throw new HttpException(
         `Пользователь с ID ${userId} не найден`,
-        HttpStatus.NOT_FOUND,
-      );
+        HttpStatus.NOT_FOUND
+      )
     }
 
-    await user.update({ status: status });
+    await user.update({ status: status })
 
-    return user;
+    return user
   } catch (err) {
     if (err instanceof ConflictException) {
-      throw err;
+      throw err
     }
 
-    console.error('Ошибка при подтверждении аккаунта пользователя', err);
+    console.error('Ошибка при подтверждении аккаунта пользователя', err)
     throw new HttpException(
       'Ошибка при подтверждении аккаунта пользователя',
-      HttpStatus.INTERNAL_SERVER_ERROR,
-    );
+      HttpStatus.INTERNAL_SERVER_ERROR
+    )
   }
-};
+}

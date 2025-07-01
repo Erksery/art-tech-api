@@ -1,11 +1,11 @@
-import * as dotenv from 'dotenv';
-import { Dialect } from 'sequelize';
-import { File } from 'src/models/file.model';
-import { Folder } from 'src/models/folder.model';
-import { Token } from 'src/models/token.model';
-import { User } from 'src/models/user.model';
+import * as dotenv from 'dotenv'
+import { Dialect } from 'sequelize'
+import { File } from 'src/models/file.model'
+import { Folder } from 'src/models/folder.model'
+import { Token } from 'src/models/token.model'
+import { User } from 'src/models/user.model'
 
-dotenv.config();
+dotenv.config()
 
 export const sequelizeConfig = {
   dialect: 'mysql' as Dialect,
@@ -18,5 +18,5 @@ export const sequelizeConfig = {
   autoLoadModels: true,
   synchronize: false,
   sync: { alter: false },
-  logging: console.log,
-};
+  logging: console.log
+}

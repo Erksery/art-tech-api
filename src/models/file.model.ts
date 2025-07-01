@@ -4,10 +4,10 @@ import {
   DataType,
   ForeignKey,
   Model,
-  Table,
-} from 'sequelize-typescript';
-import { InferAttributes, InferCreationAttributes } from 'sequelize';
-import { Folder } from './folder.model';
+  Table
+} from 'sequelize-typescript'
+import { InferAttributes, InferCreationAttributes } from 'sequelize'
+import { Folder } from './folder.model'
 
 @Table({ tableName: 'files', timestamps: true })
 export class File extends Model<
@@ -17,29 +17,29 @@ export class File extends Model<
   @Column({
     type: DataType.UUID,
     defaultValue: DataType.UUIDV4,
-    primaryKey: true,
+    primaryKey: true
   })
-  declare id: string;
+  declare id: string
 
   @Column({ type: DataType.STRING, allowNull: false })
-  declare name: string;
+  declare name: string
 
   @Column({ type: DataType.STRING, allowNull: false })
-  declare originalFilename: string;
+  declare originalFilename: string
 
   @Column({ type: DataType.UUID, allowNull: false })
-  declare creator: string;
+  declare creator: string
 
   @Column({ type: DataType.STRING, allowNull: false })
-  declare mimeType: string;
+  declare mimeType: string
 
   @Column({ type: DataType.INTEGER, allowNull: false })
-  declare size: number;
+  declare size: number
 
   @ForeignKey(() => Folder)
   @Column({ type: DataType.UUID, allowNull: false })
-  declare folderId: string | null;
+  declare folderId: string | null
 
   @BelongsTo(() => Folder, { onDelete: 'CASCADE' })
-  folder?: Folder;
+  folder?: Folder
 }

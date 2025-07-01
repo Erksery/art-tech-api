@@ -4,10 +4,10 @@ import {
   Model,
   Table,
   ForeignKey,
-  BelongsTo,
-} from 'sequelize-typescript';
-import { User } from './user.model';
-import { InferAttributes, InferCreationAttributes } from 'sequelize';
+  BelongsTo
+} from 'sequelize-typescript'
+import { User } from './user.model'
+import { InferAttributes, InferCreationAttributes } from 'sequelize'
 
 @Table({ tableName: 'tokens', timestamps: false })
 export class Token extends Model<
@@ -17,17 +17,17 @@ export class Token extends Model<
   @Column({
     type: DataType.UUID,
     defaultValue: DataType.UUIDV4,
-    primaryKey: true,
+    primaryKey: true
   })
-  declare id: string;
+  declare id: string
 
   @ForeignKey(() => User)
   @Column({ type: DataType.UUID, allowNull: false })
-  declare userId: string;
+  declare userId: string
 
   @Column({ type: DataType.STRING, allowNull: false })
-  declare token: string;
+  declare token: string
 
   @BelongsTo(() => User)
-  declare user?: User;
+  declare user?: User
 }

@@ -1,16 +1,16 @@
-import { Type } from 'class-transformer';
-import { IsOptional, ValidateNested } from 'class-validator';
+import { Type } from 'class-transformer'
+import { IsOptional, ValidateNested } from 'class-validator'
 
 class EditDataDto {
   @IsOptional()
-  folderId?: string;
+  folderId?: string
 
   @IsOptional()
-  originalFilename?: string;
+  originalFilename?: string
 }
 
 export class EditFileDto {
   @ValidateNested()
   @Type(() => EditDataDto)
-  editData: EditDataDto;
+  editData: EditDataDto
 }

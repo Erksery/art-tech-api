@@ -1,24 +1,24 @@
-import { User } from 'src/models/user.model';
-import { Token } from 'src/models/token.model';
-import { JwtService } from '@nestjs/jwt';
-import { Injectable } from '@nestjs/common';
-import { InjectModel } from '@nestjs/sequelize';
-import { RegisterDto } from '../dto/register.dto';
-import { LoginDto } from '../dto/login.dto';
-import { createUser } from './utils/createUser';
-import { loginUser } from './utils/loginUser';
-import { logoutUser } from './utils/logoutUser';
-import { refreshUserToken } from './utils/refreshUserToken';
-import { Response } from 'express';
-import { getProfile } from './utils/getProfile';
-import { getUser } from './utils/getUser';
+import { User } from 'src/models/user.model'
+import { Token } from 'src/models/token.model'
+import { JwtService } from '@nestjs/jwt'
+import { Injectable } from '@nestjs/common'
+import { InjectModel } from '@nestjs/sequelize'
+import { RegisterDto } from '../dto/register.dto'
+import { LoginDto } from '../dto/login.dto'
+import { createUser } from './utils/createUser'
+import { loginUser } from './utils/loginUser'
+import { logoutUser } from './utils/logoutUser'
+import { refreshUserToken } from './utils/refreshUserToken'
+import { Response } from 'express'
+import { getProfile } from './utils/getProfile'
+import { getUser } from './utils/getUser'
 
 @Injectable()
 export class UserService {
   constructor(
     @InjectModel(User) private userModel: typeof User,
     @InjectModel(Token) private tokenModel: typeof Token,
-    private jwtService: JwtService,
+    private jwtService: JwtService
   ) {}
 
   async register(dto: RegisterDto, res: Response) {
@@ -26,16 +26,16 @@ export class UserService {
       dto,
       this.userModel,
       this.tokenModel,
-      this.jwtService,
-    );
+      this.jwtService
+    )
 
     res.cookie('accessToken', accessToken, {
       httpOnly: true,
       secure: false,
       sameSite: 'lax',
-      maxAge: 15 * 60 * 1000,
-    });
-    return res.json({ user, accessToken, refreshToken });
+      maxAge: 15 * 60 * 1000
+    })
+    return res.json({ user, accessToken, refreshToken })
   }
 
   async login(dto: LoginDto, res: Response) {
@@ -43,19 +43,19 @@ export class UserService {
       dto,
       this.userModel,
       this.tokenModel,
-      this.jwtService,
-    );
+      this.jwtService
+    )
     res.cookie('accessToken', accessToken, {
       httpOnly: true,
       secure: false,
       sameSite: 'lax',
-      maxAge: 15 * 60 * 1000,
-    });
-    return res.json({ user, accessToken, refreshToken });
+      maxAge: 15 * 60 * 1000
+    })
+    return res.json({ user, accessToken, refreshToken })
   }
 
   async logout(refreshToken, res: Response) {
-    return logoutUser(refreshToken, this.tokenModel, res);
+    return logoutUser(refreshToken, this.tokenModel, res)
   }
 
   async refresh(refreshToken, res: Response) {
@@ -63,23 +63,23 @@ export class UserService {
       refreshToken,
       this.userModel,
       this.tokenModel,
-      this.jwtService,
-    );
+      this.jwtService
+    )
 
     res.cookie('accessToken', accessToken, {
       httpOnly: true,
       secure: false,
       sameSite: 'lax',
-      maxAge: 15 * 60 * 1000,
-    });
-    return res.json({ accessToken });
+      maxAge: 15 * 60 * 1000
+    })
+    return res.json({ accessToken })
   }
 
   async getProfile(req) {
-    return await getProfile(this.userModel, req.user.id);
+    return await getProfile(this.userModel, req.user.id)
   }
 
   async getUser(userId: string) {
-    return await getUser(this.userModel, userId);
+    return await getUser(this.userModel, userId)
   }
 }
