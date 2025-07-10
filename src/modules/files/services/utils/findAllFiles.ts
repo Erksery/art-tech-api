@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus } from '@nestjs/common'
+import { ConflictException, HttpException, HttpStatus } from '@nestjs/common'
 import { Op } from 'sequelize'
 import { File } from 'src/models/file.model'
 
@@ -14,7 +14,7 @@ export const findAllFiles = async (
       throw new HttpException(`Отсутствует id папки`, HttpStatus.NOT_FOUND)
     }
 
-    const where: any = { folderId }
+    const where: any = { folderId, isDeleted: false }
 
     if (filter) {
       const [key, value] = filter.split('=')
@@ -45,7 +45,11 @@ export const findAllFiles = async (
 
     return files
   } catch (err) {
-    console.log('Ошибка при получении файлов', err)
+    if (err instanceof ConflictException) {
+      throw err
+    }
+
+    console.error('Ошибка при получении файлов', err)
     throw new HttpException(
       'Ошибка при получении файлов',
       HttpStatus.INTERNAL_SERVER_ERROR

@@ -27,7 +27,8 @@ export const pasteFile = async (
         creator: file.creator,
         mimeType: file.mimeType,
         size: file.size,
-        folderId: folderId
+        folderId: folderId,
+        isDeleted: false
       })
 
       copiedFiles.push(copiedFile)

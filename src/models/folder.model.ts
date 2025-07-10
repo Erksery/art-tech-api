@@ -1,4 +1,12 @@
-import { Column, DataType, HasMany, Model, Table } from 'sequelize-typescript'
+import {
+  BelongsTo,
+  Column,
+  DataType,
+  ForeignKey,
+  HasMany,
+  Model,
+  Table
+} from 'sequelize-typescript'
 import { InferAttributes, InferCreationAttributes } from 'sequelize'
 import {
   PRIVACY_VALUES,
@@ -7,6 +15,7 @@ import {
   SharingType
 } from 'src/config/constants.config'
 import { File } from './file.model'
+import { User } from './user.model'
 
 @Table({ tableName: 'folders', timestamps: false })
 export class Folder extends Model<
@@ -23,8 +32,14 @@ export class Folder extends Model<
   declare name: string
   @Column({ type: DataType.STRING, allowNull: true })
   declare description: string
+
+  @ForeignKey(() => User)
   @Column({ type: DataType.UUID, allowNull: false })
   declare creator: string
+
+  @BelongsTo(() => User, { onDelete: 'CASCADE' })
+  creatorUser?: User
+
   @Column({ type: DataType.UUID, allowNull: true })
   declare inFolder: string
   @Column({

@@ -4,7 +4,6 @@ import { File } from 'src/models/file.model'
 import { findAllFiles } from './utils/findAllFiles'
 import { Request } from 'express'
 import { findOneFile } from './utils/findOneFile'
-import { createFile } from './utils/createFile'
 import { editFile } from './utils/editFile'
 import { deleteFile, deleteFiles } from './utils/deleteFile'
 import { getFileContent } from './utils/getFilePath'
@@ -14,12 +13,15 @@ import { uploadFile } from './utils/uploadFile'
 import { findVideoFile } from './utils/findVideoFile'
 import { pasteFile } from './utils/copyFile'
 import { downloadFile } from './utils/downloadFile'
+import { Trash } from 'src/models/trash.model'
+import { AuthRequest } from 'src/types/AuthRequest.type'
 
 @Injectable()
 export class FilesService {
   constructor(
     @InjectModel(File) private fileModel: typeof File,
-    @InjectModel(Folder) private folderModel: typeof Folder
+    @InjectModel(Folder) private folderModel: typeof Folder,
+    @InjectModel(Trash) private trashModel: typeof Trash
   ) {}
 
   async findAll(
@@ -63,12 +65,12 @@ export class FilesService {
     return await editFile(this.fileModel, fileId, data)
   }
 
-  async deleteOne(fileId: string, req: Request) {
-    return await deleteFile(this.fileModel, fileId)
+  async deleteOne(fileId: string, req: AuthRequest) {
+    return await deleteFile(this.fileModel, this.trashModel, fileId, req)
   }
 
-  async deleteMultiple(filesId: string[], req: Request) {
-    return await deleteFiles(this.fileModel, filesId)
+  async deleteMultiple(filesId: string[], req: AuthRequest) {
+    return await deleteFiles(this.fileModel, this.trashModel, filesId, req)
   }
 
   async upload(folderId: string, req: Request, res: Response) {

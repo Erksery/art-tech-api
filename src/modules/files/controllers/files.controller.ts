@@ -37,6 +37,7 @@ import { join } from 'path'
 import { CreateFileGuard } from 'src/auth/guard/file/createFile.guard'
 import { PasteFileDto } from '../dto/pasteFile.dto'
 import { DeleteDataDto } from '../dto/delete.dto'
+import { AuthRequest } from 'src/types/AuthRequest.type'
 
 @Controller(SITE_CONTROLLER.FILE)
 @UseGuards(AuthGuard, RolesGuard, StatusGuard)
@@ -161,7 +162,7 @@ export class FilesController {
   @Delete(SITE_ROUTES.DELETE)
   @HttpCode(HttpStatus.OK)
   @UseGuards(DeleteFileGuard)
-  async delete(@Body() data: DeleteDataDto, @Req() req: Request) {
+  async delete(@Body() data: DeleteDataDto, @Req() req: AuthRequest) {
     return this.filesService.deleteMultiple(data.filesId, req)
   }
 

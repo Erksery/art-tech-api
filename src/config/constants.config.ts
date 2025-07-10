@@ -50,6 +50,7 @@ export const UPLOAD_FOLDER = 'uploads'
 export const COMPRESSED_FOLDER = 'compressed'
 export const ORIGINAL_FOLDER = 'original'
 export const ZIP_FOLDER = 'zip'
+export const TRASH_FOLDER = 'trash'
 
 export type PrivacyType = (typeof PRIVACY_VALUES)[keyof typeof PRIVACY_VALUES]
 export type StatusType = (typeof STATUS_VALUES)[keyof typeof STATUS_VALUES]

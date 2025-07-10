@@ -23,7 +23,8 @@ export const createFile = async (
       creator: user.id,
       mimeType: file.mimetype,
       size: file.size,
-      folderId: folderId
+      folderId: folderId,
+      isDeleted: false
     })
 
     return createdFile
