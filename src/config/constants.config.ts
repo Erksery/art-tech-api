@@ -34,7 +34,8 @@ export const QUERY_VALUES = {
   SEARCH: 'searchValue',
   FILENAME: 'fileName',
   FILETYPE: 'fileType',
-  LOCATION: 'location'
+  LOCATION: 'location',
+  PRIVACY: 'privacy'
 }
 
 export const BODY_VALUES = {

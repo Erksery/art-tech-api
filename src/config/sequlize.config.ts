@@ -17,7 +17,7 @@ export const sequelizeConfig = {
   database: 'artTechManager',
   models: [User, Token, Folder, File, Trash],
   autoLoadModels: true,
-  synchronize: false,
+  synchronize: true,
   sync: { alter: false },
   logging: console.log
 }

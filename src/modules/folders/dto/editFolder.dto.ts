@@ -6,11 +6,32 @@ import {
   MaxLength,
   MinLength,
   IsEnum,
-  ValidateNested
+  ValidateNested,
+  registerDecorator,
+  ValidationOptions
 } from 'class-validator'
 import { PRIVACY_VALUES, SHARING_VALUES } from 'src/config/constants.config'
 
-class EditDataDto {
+function IsStringOrNull(validationOptions?: ValidationOptions) {
+  return function (object: any, propertyName: string) {
+    registerDecorator({
+      name: 'isStringOrNull',
+      target: object.constructor,
+      propertyName,
+      options: validationOptions,
+      validator: {
+        validate(value: any) {
+          return value === null || typeof value === 'string'
+        },
+        defaultMessage() {
+          return 'Значение должно быть строкой или null'
+        }
+      }
+    })
+  }
+}
+
+export class EditDataDto {
   @IsOptional()
   @IsNotEmpty({ message: 'Название папки не может быть пустым' })
   @IsString({ message: 'Название папки должно быть строкой' })
@@ -38,10 +59,17 @@ class EditDataDto {
     message: 'Недопустимое значение для sharingOptions'
   })
   sharingOptions?: keyof typeof SHARING_VALUES
-}
 
+  @IsOptional()
+  @IsStringOrNull({
+    message: 'ID родительской папки должно быть строкой или null'
+  })
+  inFolder?: string | null
+}
+/*
 export class EditFolderDto {
   @ValidateNested()
   @Type(() => EditDataDto)
   editData: EditDataDto
 }
+*/

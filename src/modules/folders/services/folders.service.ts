@@ -13,8 +13,8 @@ export class FolderService {
     @InjectModel(File) private fileModel: typeof File
   ) {}
 
-  async get(req) {
-    return await getFolders(this.folderModel, req.user)
+  async get(req, privacy: string | undefined, folderId: string | undefined) {
+    return await getFolders(this.folderModel, privacy, folderId, req.user)
   }
   async create(folderId: string | null, data, req) {
     return await createFolder(this.folderModel, folderId, data, req.user)

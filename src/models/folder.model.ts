@@ -17,7 +17,7 @@ import {
 import { File } from './file.model'
 import { User } from './user.model'
 
-@Table({ tableName: 'folders', timestamps: false })
+@Table({ tableName: 'folders', timestamps: true })
 export class Folder extends Model<
   InferAttributes<Folder>,
   InferCreationAttributes<Folder, { omit: 'id' }>
